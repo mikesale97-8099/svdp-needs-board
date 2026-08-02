@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Parish Needs Board — St. Vincent de Paul</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cork1: #8A6A4E; --cork2: #6B4A34; --cork3: #5A3D29;
+    --paper: #FBF7EC; --paperline: #E7DDC4;
+    --ink: #2B3A42; --inktext: #4A4436;
+    --rust: #A8492E; --gold: #C9A24B; --sage: #7C8B6F;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Source Serif 4', serif;
+    background: radial-gradient(ellipse at top, var(--cork1) 0%, var(--cork2) 55%, var(--cork3) 100%);
+    background-attachment: fixed;
+  }
+  .container { max-width: 960px; margin: 0 auto; padding: 48px 20px 30px; position: relative; }
+
+  .back-link {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: #E7DDC4;
+    text-decoration: none;
+    margin-bottom: 24px;
+    opacity: 0.85;
+  }
+  .back-link:hover { opacity: 1; }
+
+  .header { text-align: center; margin-bottom: 40px; }
+  .header-card {
+    display: inline-block;
+    padding: 20px 32px;
+    background: var(--paper);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+    transform: rotate(-1deg);
+  }
+  .header-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--rust);
+    margin-bottom: 4px;
+  }
+  .header-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 34px;
+    color: var(--ink);
+    margin: 0 0 8px;
+  }
+  .header-sub {
+    font-size: 14px;
+    color: var(--inktext);
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  .stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 32px;
+    margin-bottom: 40px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 26px;
+    color: var(--paper);
+  }
+  .stat-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--paperline);
+  }
+
+  .filters {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+  .filter-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.03em;
+    padding: 6px 16px;
+    background: transparent;
+    color: var(--paperline);
+    border: 1px solid var(--paperline);
+    cursor: pointer;
+    border-radius: 2px;
+  }
+  .filter-btn.active { background: var(--paper); color: var(--ink); }
+
+  .board {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 32px 32px;
+  }
+
+  .card-wrap { position: relative; width: 256px; }
+  .card-pin {
+    position: absolute;
+    left: 50%; top: -10px;
+    transform: translateX(-50%);
+    width: 16px; height: 16px; border-radius: 50%;
+    box-shadow: 0 2px 3px rgba(0,0,0,0.35);
+    z-index: 10;
+  }
+  .card {
+    position: relative;
+    min-height: 190px;
+    padding: 24px 20px 20px;
+    background: var(--paper);
+    background-image: repeating-linear-gradient(var(--paper) 0px, var(--paper) 27px, var(--paperline) 28px);
+    box-shadow: 0 6px 14px rgba(43,58,66,0.22);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s, opacity 0.3s, box-shadow 0.2s;
+  }
+  .card:not(.claimed):hover { transform: translateY(-4px); }
+  .card.claimed { opacity: 0.6; box-shadow: 0 2px 6px rgba(43,58,66,0.15); }
+
+  .card-urgency {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .card-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--ink);
+    margin: 0 0 8px;
+    line-height: 1.3;
+  }
+  .card-detail {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--inktext);
+    margin: 0;
+  }
+  .card-btn {
+    margin-top: 16px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    letter-spacing: 0.03em;
+    padding: 8px 0;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+  .card-btn.claimed-btn {
+    background: transparent;
+    color: var(--sage);
+    border: 1px solid var(--sage);
+    cursor: default;
+  }
+
+  .stamp {
+    position: absolute;
+    right: -8px; top: -12px;
+    transform: rotate(-14deg);
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--sage);
+    border: 3px solid var(--sage);
+    border-radius: 6px;
+    padding: 2px 10px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    opacity: 0.9;
+    mix-blend-mode: multiply;
+    display: none;
+    pointer-events: none;
+  }
+  .card.claimed .stamp { display: block; }
+
+  .toast {
+    position: fixed;
+    bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    padding: 12px 20px;
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 14px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .footer-note {
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #E7DDC4;
+    opacity: 0.7;
+    margin-top: 56px;
+    padding-bottom: 16px;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <a href="index.html" class="back-link">&larr; Back</a>
+
+    <div class="header">
+      <div class="header-card">
+        <div class="header-eyebrow">St. Vincent de Paul &middot; Parish Needs Board</div>
+        <h1 class="header-title">Our neighbors, right now</h1>
+        <p class="header-sub">These are real, current needs from home visits this month. No names — just what's needed, and how much is left to give.</p>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div><div class="stat-num" id="stat-total">0</div><div class="stat-label">needs posted</div></div>
+      <div><div class="stat-num" id="stat-claimed">0</div><div class="stat-label">claimed this month</div></div>
+      <div><div class="stat-num" id="stat-open">0</div><div class="stat-label">still open</div></div>
+    </div>
+
+    <div class="filters" id="filters"></div>
+    <div class="board" id="board"></div>
+
+    <div class="footer-note">Updated after every home visit &middot; Society of St. Vincent de Paul</div>
+  </div>
+
+  <div class="toast" id="toast">Thank you. Someone from SVdP will reach out with next steps.</div>
+
+<script>
+  const NEEDS = [
+    { id: 1, category: "Furnishings", title: "Twin bed frame + mattress", detail: "Family of 4, kids sharing a room. Currently sleeping on the floor.", urgency: "high", rotate: -2 },
+    { id: 2, category: "Furnishings", title: "Kitchen table + 4 chairs", detail: "Single dad, two school-age kids. No place to eat together.", urgency: "medium", rotate: 1.5 },
+    { id: 3, category: "Rent", title: "$420 toward March rent", detail: "Grandmother raising two grandchildren, short after a car repair.", urgency: "high", rotate: -1 },
+    { id: 4, category: "Utilities", title: "Overdue electric bill, $185", detail: "Household of 3, shutoff notice received this week.", urgency: "high", rotate: 2 },
+    { id: 5, category: "Furnishings", title: "Working refrigerator", detail: "Family of 5, current fridge stopped cooling last month.", urgency: "medium", rotate: -1.5 },
+    { id: 6, category: "Rent", title: "$300 toward February rent", detail: "Mom returning to work after medical leave, one month behind.", urgency: "medium", rotate: 1 },
+    { id: 7, category: "Utilities", title: "Gas bill, $95", detail: "Elderly couple on fixed income, house has been cold.", urgency: "low", rotate: -2 },
+    { id: 8, category: "Furnishings", title: "Dresser + bedding, twin size", detail: "Newly housed family, child sleeping out of a suitcase.", urgency: "medium", rotate: 2 },
+  ];
+  const CATEGORIES = ["All", "Furnishings", "Rent", "Utilities"];
+  const URGENCY_LABEL = { high: "Time-sensitive", medium: "Needed soon", low: "This month" };
+  const URGENCY_COLOR = { high: "#A8492E", medium: "#C9A24B", low: "#7C8B6F" };
+
+  let claimed = new Set();
+  let filter = "All";
+
+  function renderFilters() {
+    const el = document.getElementById('filters');
+    el.innerHTML = '';
+    CATEGORIES.forEach(cat => {
+      const btn = document.createElement('button');
+      btn.className = 'filter-btn' + (filter === cat ? ' active' : '');
+      btn.textContent = cat;
+      btn.onclick = () => { filter = cat; render(); };
+      el.appendChild(btn);
+    });
+  }
+
+  function claimNeed(id) {
+    claimed.add(id);
+    render();
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2600);
+  }
+
+  function renderBoard() {
+    const el = document.getElementById('board');
+    el.innerHTML = '';
+    const visible = filter === "All" ? NEEDS : NEEDS.filter(n => n.category === filter);
+    visible.forEach(need => {
+      const isClaimed = claimed.has(need.id);
+      const wrap = document.createElement('div');
+      wrap.className = 'card-wrap';
+      wrap.style.transform = `rotate(${need.rotate}deg)`;
+
+      const pin = document.createElement('div');
+      pin.className = 'card-pin';
+      pin.style.background = `radial-gradient(circle at 35% 30%, #fff8 0%, ${URGENCY_COLOR[need.urgency]} 40%, ${URGENCY_COLOR[need.urgency]} 100%)`;
+
+      const card = document.createElement('div');
+      card.className = 'card' + (isClaimed ? ' claimed' : '');
+
+      card.innerHTML = `
+        <div class="stamp">CLAIMED</div>
+        <div>
+          <div class="card-urgency" style="color:${URGENCY_COLOR[need.urgency]}">${URGENCY_LABEL[need.urgency]}</div>
+          <h3 class="card-title">${need.title}</h3>
+          <p class="card-detail">${need.detail}</p>
+        </div>
+        <button class="card-btn ${isClaimed ? 'claimed-btn' : ''}" ${isClaimed ? 'disabled' : ''}>
+          ${isClaimed ? "Thank you — we'll follow up" : "I can help with this →"}
+        </button>
+      `;
+
+      if (!isClaimed) {
+        card.querySelector('button').onclick = () => claimNeed(need.id);
+      }
+
+      wrap.appendChild(pin);
+      wrap.appendChild(card);
+      el.appendChild(wrap);
+    });
+  }
+
+  function renderStats() {
+    document.getElementById('stat-total').textContent = NEEDS.length;
+    document.getElementById('stat-claimed').textContent = claimed.size;
+    document.getElementById('stat-open').textContent = NEEDS.length - claimed.size;
+  }
+
+  function render() {
+    renderFilters();
+    renderBoard();
+    renderStats();
+  }
+
+  render();
+</script>
+</body>
+</html>
