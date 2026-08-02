@@ -3,256 +3,336 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>St. Luke Catholic Church — Parish Needs Board</title>
+<title>St. Luke SVdP Conference</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --navy: #25408E;
-    --sky: #9BB0DE;
-    --skydim: #7488BC;
-    --cream: #F5F1E8;
-    --creamdim: #D3DCF2;
-    --paper: #FBF7EC;
-    --paperline: #E7DDC4;
-    --ink: #25408E;
-    --inktext: #4A4436;
-    --rust: #A8492E;
-    --gold: #C9A24B;
+    --cork1: #8A6A4E; --cork2: #6B4A34; --cork3: #5A3D29;
+    --paper: #FBF7EC; --paperline: #E7DDC4;
+    --ink: #2B3A42; --inktext: #4A4436;
+    --rust: #A8492E; --gold: #C9A24B; --sage: #7C8B6F;
+    --blue: #25408E;
   }
   * { box-sizing: border-box; }
   body {
     margin: 0;
-    background: var(--navy);
     font-family: 'Source Serif 4', serif;
-    display: flex;
-    justify-content: center;
+    background: radial-gradient(ellipse at top, var(--cork1) 0%, var(--cork2) 55%, var(--cork3) 100%);
+    background-attachment: fixed;
   }
-  .wrap {
-    width: 100%;
-    max-width: 420px;
-    padding: 40px 20px 56px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  .container { max-width: 960px; margin: 0 auto; padding: 48px 20px 30px; position: relative; }
+
+  .header { text-align: center; margin-bottom: 36px; }
+  .header-card {
+    display: inline-block;
+    padding: 22px 32px;
+    background: var(--paper);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+    transform: rotate(-1deg);
+    max-width: 560px;
   }
-  .eyebrow {
+  .header-eyebrow {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.25em;
-    color: var(--sky);
-    text-align: center;
-    margin-bottom: 12px;
+    color: var(--blue);
+    margin-bottom: 4px;
   }
-  .pin {
-    width: 40px; height: 40px; border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, #E9D08C 0%, var(--gold) 55%, #A8802F 100%);
-    box-shadow: 0 3px 6px rgba(0,0,0,0.4);
-    margin-bottom: 20px;
-  }
-  h1 {
+  .header-title {
     font-family: 'Fraunces', serif;
     font-weight: 700;
-    font-size: 30px;
-    color: var(--cream);
-    text-align: center;
-    line-height: 1.15;
+    font-size: 32px;
+    color: var(--ink);
+    margin: 0 0 6px;
+  }
+  .header-tagline {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--rust);
     margin: 0 0 12px;
   }
-  .lede {
+  .header-sub {
     font-size: 14px;
     line-height: 1.6;
-    color: var(--creamdim);
-    text-align: center;
-    margin: 0 0 32px;
-    padding: 0 8px;
-  }
-  .cta {
-    width: 100%;
-    display: block;
-    position: relative;
-    text-decoration: none;
-    margin-bottom: 32px;
-  }
-  .cta-pin {
-    position: absolute;
-    left: 50%;
-    top: -10px;
-    transform: translateX(-50%);
-    width: 14px; height: 14px; border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, #fff8 0%, var(--rust) 45%, var(--rust) 100%);
-    box-shadow: 0 2px 3px rgba(0,0,0,0.35);
-    z-index: 2;
-  }
-  .cta-card {
-    padding: 24px 20px 20px;
-    background: var(--paper);
-    box-shadow: 0 8px 18px rgba(0,0,0,0.35);
-    background-image: repeating-linear-gradient(var(--paper) 0px, var(--paper) 26px, var(--paperline) 27px);
-    transform: rotate(-1deg);
-  }
-  .cta-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: var(--rust);
-    font-weight: 600;
-    margin-bottom: 6px;
-  }
-  .cta-title {
-    font-family: 'Fraunces', serif;
-    font-weight: 700;
-    font-size: 21px;
-    color: var(--ink);
-    margin-bottom: 6px;
-  }
-  .cta-sub {
-    font-size: 14px;
-    line-height: 1.55;
     color: var(--inktext);
-    margin: 0 0 14px;
+    max-width: 480px;
+    margin: 0 auto;
   }
-  .cta-btn {
+
+  .section { margin-bottom: 56px; }
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--paperline);
+    text-align: center;
+    margin-bottom: 18px;
+  }
+
+  /* ---- Needs preview ---- */
+  .stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 32px;
+    margin-bottom: 32px;
+    text-align: center;
+  }
+  .stat-num { font-family: 'Fraunces', serif; font-weight: 700; font-size: 26px; color: var(--paper); }
+  .stat-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--paperline); }
+
+  .preview-board { display: flex; flex-wrap: wrap; justify-content: center; gap: 28px; margin-bottom: 28px; }
+  .card-wrap { position: relative; width: 240px; }
+  .card-pin {
+    position: absolute; left: 50%; top: -10px; transform: translateX(-50%);
+    width: 16px; height: 16px; border-radius: 50%;
+    box-shadow: 0 2px 3px rgba(0,0,0,0.35); z-index: 10;
+  }
+  .card {
+    position: relative; min-height: 170px; padding: 22px 18px 18px;
+    background: var(--paper);
+    background-image: repeating-linear-gradient(var(--paper) 0px, var(--paper) 27px, var(--paperline) 28px);
+    box-shadow: 0 6px 14px rgba(43,58,66,0.22);
+  }
+  .card-urgency { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 6px; }
+  .card-title { font-family: 'Fraunces', serif; font-weight: 600; font-size: 17px; color: var(--ink); margin: 0 0 6px; line-height: 1.3; }
+  .card-detail { font-size: 13px; line-height: 1.5; color: var(--inktext); margin: 0; }
+
+  .board-cta { text-align: center; }
+  .board-cta a {
     display: inline-block;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 14px;
     background: var(--ink);
     color: var(--paper);
-    padding: 9px 16px;
-  }
-  .links {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 40px;
-  }
-  .link-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 16px;
-    background: rgba(245,241,232,0.06);
-    border: 1px solid rgba(143,179,217,0.35);
+    padding: 10px 22px;
     text-decoration: none;
   }
-  .link-icon { font-size: 20px; }
-  .link-body { flex: 1; }
-  .link-label { font-size: 14px; font-weight: 600; color: var(--cream); }
-  .link-sub { font-size: 12px; color: #9FB6C9; margin-top: 2px; }
-  .link-arrow { color: var(--sky); }
 
-  .values-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--sky);
-    text-align: center;
-    margin-bottom: 12px;
+  /* ---- Next drive ---- */
+  .drive-card {
+    max-width: 480px; margin: 0 auto; text-align: center;
+    padding: 28px 24px; background: var(--paper);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+    transform: rotate(1deg);
   }
-  .values {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 40px;
+  .drive-eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; color: var(--rust); margin-bottom: 8px; }
+  .drive-title { font-family: 'Fraunces', serif; font-weight: 700; font-size: 26px; color: var(--ink); margin: 0; }
+
+  /* ---- Tables ---- */
+  .table-card {
+    background: var(--paper);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    padding: 8px;
+    overflow-x: auto;
   }
-  .value-chip {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
-    color: var(--creamdim);
-    border: 1px solid rgba(143,179,217,0.4);
-    padding: 6px 12px;
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td {
+    padding: 10px 14px; text-align: left;
+    border-bottom: 1px solid var(--paperline);
+    color: var(--inktext); white-space: nowrap;
   }
-  .quote {
-    font-style: italic;
-    font-size: 14px;
-    color: #B7CBDE;
-    text-align: center;
-    padding: 0 16px;
-    margin: 0 0 4px;
+  th {
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--ink); font-weight: 700;
   }
-  .quote-attr {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: var(--sky);
-    margin-bottom: 40px;
+  tr.total-row td { font-weight: 700; color: var(--ink); border-top: 2px solid var(--ink); border-bottom: none; }
+
+  /* ---- Sister conferences ---- */
+  .sisters { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; }
+  .sister-card {
+    width: 260px; padding: 20px; background: var(--paper);
+    box-shadow: 0 6px 14px rgba(43,58,66,0.22);
   }
-  .footer {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    line-height: 1.6;
-    color: var(--skydim);
-    text-align: center;
+  .sister-name { font-family: 'Fraunces', serif; font-weight: 700; font-size: 17px; color: var(--ink); margin: 0 0 6px; }
+  .sister-blurb { font-size: 13px; color: var(--inktext); line-height: 1.5; margin: 0; }
+
+  /* ---- Volunteer CTA ---- */
+  .volunteer-card {
+    max-width: 480px; margin: 0 auto; text-align: center;
+    padding: 28px 24px; background: var(--blue); color: var(--paper);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
   }
+  .volunteer-title { font-family: 'Fraunces', serif; font-weight: 700; font-size: 22px; margin: 0 0 8px; }
+  .volunteer-sub { font-size: 14px; line-height: 1.5; margin: 0 0 18px; opacity: 0.9; }
+  .volunteer-btn {
+    display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 14px;
+    background: var(--paper); color: var(--blue); padding: 10px 22px; text-decoration: none;
+  }
+
+  .footer-note { text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #E7DDC4; opacity: 0.7; padding-bottom: 16px; }
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="eyebrow">St. Luke Catholic Church &middot; St. Vincent de Paul</div>
-    <div class="pin"></div>
-    <h1>Neighbors Helping Neighbors</h1>
-    <p class="lede" style="font-style: italic; margin-bottom: 6px;">A Hand Up, Not a Hand Out</p>
-    <p class="lede">The St. Vincent de Paul Society serves our neighbors here by visiting families privately in their homes. Here's what they need right now — and how you can help.</p>
-
-    <a href="board.html" class="cta">
-      <div class="cta-pin"></div>
-      <div class="cta-card">
-        <div class="cta-label">Live &middot; Parish Needs Board</div>
-        <div class="cta-title">See who needs help this week</div>
-        <p class="cta-sub">Beds, rent, utility bills — real requests from home visits, no names attached.</p>
-        <div class="cta-btn">Open the board &rarr;</div>
+  <div class="container">
+    <div class="header">
+      <div class="header-card">
+        <div class="header-eyebrow">Society of St. Vincent de Paul &middot; St. Luke Conference</div>
+        <h1 class="header-title">Neighbors Helping Neighbors</h1>
+        <p class="header-tagline">A Hand Up, Not a Hand Out</p>
+        <p class="header-sub">The St. Vincent de Paul Society serves our neighbors here by visiting families privately in their homes, where clients are free to discuss their struggles and needs. Our Vincentians listen, offer humble advice, and render assistance.</p>
       </div>
-    </a>
-
-    <div class="links">
-      <a href="#" class="link-row">
-        <span class="link-icon">🛏️</span>
-        <div class="link-body">
-          <div class="link-label">40 Days for 40 Beds</div>
-          <div class="link-sub">This season's campaign — $100 gives a twin bed</div>
-        </div>
-        <span class="link-arrow">&rarr;</span>
-      </a>
-      <a href="#" class="link-row">
-        <span class="link-icon">🤝</span>
-        <div class="link-body">
-          <div class="link-label">Volunteer with us</div>
-          <div class="link-sub">Food pantry, home visits, Changing Lives Forever</div>
-        </div>
-        <span class="link-arrow">&rarr;</span>
-      </a>
-      <a href="#" class="link-row">
-        <span class="link-icon">💝</span>
-        <div class="link-body">
-          <div class="link-label">Give financially</div>
-          <div class="link-sub">One-time or recurring, any amount helps</div>
-        </div>
-        <span class="link-arrow">&rarr;</span>
-      </a>
     </div>
 
-    <div class="values-label">Why we do this</div>
-    <div class="values">
-      <span class="value-chip">Serve cheerfully</span>
-      <span class="value-chip">Build relationships</span>
-      <span class="value-chip">Promote self-sufficiency</span>
-      <span class="value-chip">Address root causes</span>
+    <!-- ===== Needs Bulletin Board (preview) ===== -->
+    <div class="section">
+      <div class="section-label">Needs Bulletin Board</div>
+      <div class="stats">
+        <div><div class="stat-num" id="stat-total">&mdash;</div><div class="stat-label">needs posted</div></div>
+        <div><div class="stat-num" id="stat-open">&mdash;</div><div class="stat-label">still open</div></div>
+      </div>
+      <div class="preview-board" id="preview-board"></div>
+      <div class="board-cta"><a href="board.html">View the full board &rarr;</a></div>
     </div>
 
-    <p class="quote">&ldquo;I will always welcome joyfully any opportunity that comes my way to be of service to you.&rdquo;</p>
-    <div class="quote-attr">&mdash; St. Vincent de Paul</div>
-
-    <div class="footer">
-      St. Luke Catholic Church &middot; 7575 Holliday Drive East, Indianapolis, IN 46260<br />
-      (317) 259-4373 &middot; <a href="https://www.stluke.org" style="color:inherit;">stluke.org</a><br />
-      Scan again anytime this card is posted
+    <!-- ===== Next Parish Drive ===== -->
+    <div class="section">
+      <div class="section-label">Our Next SVdP Parish Drive</div>
+      <div class="drive-card">
+        <div class="drive-eyebrow">Now Collecting</div>
+        <h2 class="drive-title">Kitchen Shower</h2>
+      </div>
     </div>
+
+    <!-- ===== Home Visit Results ===== -->
+    <div class="section">
+      <div class="section-label">Home Visit Results</div>
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>Month</th><th>Home Visits</th><th>People Helped</th>
+              <th>Furniture / Home Requests</th><th>Rent / Utility Requests</th>
+              <th>Financial Assistance</th>
+            </tr>
+          </thead>
+          <tbody id="results-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== 2026 Campaigns ===== -->
+    <div class="section">
+      <div class="section-label">2026 SVdP Parish Campaigns</div>
+      <div class="table-card">
+        <table>
+          <thead><tr><th>Campaign</th><th>When</th><th>Results</th></tr></thead>
+          <tbody>
+            <tr><td>40 Days for 40 Beds</td><td>&mdash;</td><td>&mdash;</td></tr>
+            <tr><td>Kitchen Drive</td><td>&mdash;</td><td>&mdash;</td></tr>
+            <tr><td>Blanket Drive</td><td>&mdash;</td><td>&mdash;</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== Sister Conferences ===== -->
+    <div class="section">
+      <div class="section-label">Supporting Our Sister Conferences</div>
+      <div class="sisters">
+        <div class="sister-card">
+          <div class="sister-name">St. Rita</div>
+          <p class="sister-blurb">Details on how St. Luke supports the St. Rita conference go here.</p>
+        </div>
+        <div class="sister-card">
+          <div class="sister-name">Jamaica</div>
+          <p class="sister-blurb">Details on how St. Luke supports our sister conference in Jamaica go here.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Volunteer CTA ===== -->
+    <div class="section">
+      <div class="volunteer-card">
+        <h2 class="volunteer-title">Become a Volunteer</h2>
+        <p class="volunteer-sub">Join our Vincentians in serving our St. Luke neighbors with dignity and love.</p>
+        <a href="#" class="volunteer-btn">Get Involved &rarr;</a>
+      </div>
+    </div>
+
+    <div class="footer-note">St. Luke Catholic Church &middot; St. Vincent de Paul Society &middot; Updated after every home visit</div>
   </div>
+
+<script src="site.js"></script>
+<script>
+  const URGENCY_LABEL = { high: "Time-sensitive", medium: "Needed soon", low: "This month" };
+  const URGENCY_COLOR = { high: "#A8492E", medium: "#C9A24B", low: "#7C8B6F" };
+  const ROTATIONS = [-2, 1.5, -1];
+
+  function renderPreview(allNeeds) {
+    const needs = activeNeeds(allNeeds);
+    document.getElementById('stat-total').textContent = needs.length;
+    document.getElementById('stat-open').textContent = needs.length;
+
+    const el = document.getElementById('preview-board');
+    el.innerHTML = '';
+    needs.slice(0, 3).forEach((need, i) => {
+      const urgency = (need.urgency || 'medium').toLowerCase();
+      const wrap = document.createElement('div');
+      wrap.className = 'card-wrap';
+      wrap.style.transform = `rotate(${ROTATIONS[i % ROTATIONS.length]}deg)`;
+
+      const pin = document.createElement('div');
+      pin.className = 'card-pin';
+      pin.style.background = `radial-gradient(circle at 35% 30%, #fff8 0%, ${URGENCY_COLOR[urgency]} 40%, ${URGENCY_COLOR[urgency]} 100%)`;
+
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="card-urgency" style="color:${URGENCY_COLOR[urgency]}">${URGENCY_LABEL[urgency] || urgency}</div>
+        <h3 class="card-title">${need.title || ''}</h3>
+        <p class="card-detail">${need.detail || ''}</p>
+      `;
+      wrap.appendChild(pin);
+      wrap.appendChild(card);
+      el.appendChild(wrap);
+    });
+  }
+
+  function renderResults(rows) {
+    const body = document.getElementById('results-body');
+    body.innerHTML = '';
+    let totals = { home_visits: 0, people_helped: 0, furniture_requests: 0, rent_utility_requests: 0, financial_assistance: 0 };
+    rows.forEach(r => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${r.month || ''}</td>
+        <td>${r.home_visits || ''}</td>
+        <td>${r.people_helped || ''}</td>
+        <td>${r.furniture_requests || ''}</td>
+        <td>${r.rent_utility_requests || ''}</td>
+        <td>${r.financial_assistance ? '$' + Number(r.financial_assistance).toLocaleString() : ''}</td>
+      `;
+      body.appendChild(tr);
+      totals.home_visits += Number(r.home_visits) || 0;
+      totals.people_helped += Number(r.people_helped) || 0;
+      totals.furniture_requests += Number(r.furniture_requests) || 0;
+      totals.rent_utility_requests += Number(r.rent_utility_requests) || 0;
+      totals.financial_assistance += Number(r.financial_assistance) || 0;
+    });
+    const totalRow = document.createElement('tr');
+    totalRow.className = 'total-row';
+    totalRow.innerHTML = `
+      <td>Total</td>
+      <td>${totals.home_visits}</td>
+      <td>${totals.people_helped}</td>
+      <td>${totals.furniture_requests}</td>
+      <td>${totals.rent_utility_requests}</td>
+      <td>$${totals.financial_assistance.toLocaleString()}</td>
+    `;
+    body.appendChild(totalRow);
+  }
+
+  async function init() {
+    renderPreview(await loadNeeds());
+    renderResults(await loadResults());
+  }
+  init();
+</script>
 </body>
 </html>
