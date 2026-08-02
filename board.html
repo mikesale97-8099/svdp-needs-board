@@ -34,13 +34,14 @@
   }
   .back-link:hover { opacity: 1; }
 
-  .header { text-align: center; margin-bottom: 40px; }
+  .header { text-align: center; margin-bottom: 32px; }
   .header-card {
     display: inline-block;
     padding: 20px 32px;
     background: var(--paper);
     box-shadow: 0 8px 20px rgba(0,0,0,0.35);
     transform: rotate(-1deg);
+    max-width: 500px;
   }
   .header-eyebrow {
     font-family: 'IBM Plex Mono', monospace;
@@ -64,16 +65,34 @@
     margin: 0 auto;
   }
 
-  .stats {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 32px;
-    margin-bottom: 40px;
-    text-align: center;
+  /* ---- Shared fund thermometer ---- */
+  .fund-card {
+    max-width: 520px; margin: 0 auto 40px; text-align: center;
+    padding: 28px 28px 24px; background: var(--paper);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
   }
-  .stat-num { font-family: 'Fraunces', serif; font-weight: 700; font-size: 26px; color: var(--paper); }
-  .stat-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--paperline); }
+  .fund-label {
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.2em; color: var(--rust); margin-bottom: 8px;
+  }
+  .fund-amounts { font-family: 'Fraunces', serif; font-weight: 700; font-size: 28px; color: var(--ink); margin-bottom: 4px; }
+  .fund-amounts span { color: var(--sage); }
+  .fund-sub { font-size: 13px; color: var(--inktext); margin-bottom: 14px; }
+  .fund-track { width: 100%; height: 12px; background: var(--paperline); border-radius: 6px; overflow: hidden; margin-bottom: 18px; }
+  .fund-fill { height: 100%; background: var(--sage); transition: width 0.4s ease; }
+  .fund-give-btn {
+    display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 14px;
+    background: var(--blue); color: var(--paper); padding: 11px 26px; text-decoration: none; border-radius: 2px;
+  }
+  .fund-note {
+    font-size: 12px; line-height: 1.6; color: var(--inktext); opacity: 0.85;
+    max-width: 420px; margin: 16px auto 0;
+  }
+
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace; font-size: 12px; text-transform: uppercase;
+    letter-spacing: 0.2em; color: var(--paperline); text-align: center; margin-bottom: 18px;
+  }
 
   .filters { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 40px; }
   .filter-btn {
@@ -103,6 +122,7 @@
   }
   .card:not(.claimed):hover { transform: translateY(-4px); }
   .card.claimed { opacity: 0.6; box-shadow: 0 2px 6px rgba(43,58,66,0.15); }
+  .card.covered { opacity: 0.75; }
   .card-urgency { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 6px; }
   .card-title { font-family: 'Fraunces', serif; font-weight: 600; font-size: 18px; color: var(--ink); margin: 0 0 8px; line-height: 1.3; }
   .card-detail { font-size: 14px; line-height: 1.5; color: var(--inktext); margin: 0; }
@@ -113,22 +133,35 @@
   .card-btn.claimed-btn { background: transparent; color: var(--sage); border: 1px solid var(--sage); cursor: default; }
   .stamp {
     position: absolute; right: -8px; top: -12px; transform: rotate(-14deg);
-    font-family: 'IBM Plex Mono', monospace; color: var(--sage);
-    border: 3px solid var(--sage); border-radius: 6px; padding: 2px 10px;
-    font-size: 13px; font-weight: 700; letter-spacing: 0.08em; opacity: 0.9;
-    mix-blend-mode: multiply; display: none; pointer-events: none;
+    font-family: 'IBM Plex Mono', monospace;
+    border: 3px solid; border-radius: 6px; padding: 2px 10px;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.06em; opacity: 0.9;
+    mix-blend-mode: multiply; pointer-events: none;
   }
-  .card.claimed .stamp { display: block; }
+  .status-badge {
+    display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;
+    padding: 3px 10px; border-radius: 10px; margin-bottom: 10px; color: #fff;
+  }
+  .amount-note { font-size: 12px; color: var(--inktext); opacity: 0.75; margin: 8px 0 0; }
   .empty-note {
     text-align: center; color: var(--paperline); font-family: 'IBM Plex Mono', monospace;
     font-size: 13px; padding: 20px;
   }
+
+  .share-link {
+    display: block; text-align: center; margin-top: 14px;
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+    color: var(--sage); text-decoration: none; opacity: 0.8;
+  }
+  .share-link:hover { opacity: 1; text-decoration: underline; }
 
   .toast {
     position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
     padding: 12px 20px; background: var(--ink); color: var(--paper); font-size: 14px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.4); border-radius: 2px;
     opacity: 0; transition: opacity 0.3s, transform 0.3s; pointer-events: none;
+    max-width: 320px; text-align: center;
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
@@ -143,16 +176,20 @@
       <div class="header-card">
         <div class="header-eyebrow">St. Luke Catholic Church &middot; Parish Needs Board</div>
         <h1 class="header-title">Our neighbors, right now</h1>
-        <p class="header-sub">These are real, current needs from home visits this month. No names — just what's needed, and how much is left to give.</p>
+        <p class="header-sub">These are real, current needs from home visits this month. No names — just what's needed, and how you can help.</p>
       </div>
     </div>
 
-    <div class="stats">
-      <div><div class="stat-num" id="stat-total">&mdash;</div><div class="stat-label">needs posted</div></div>
-      <div><div class="stat-num" id="stat-claimed">&mdash;</div><div class="stat-label">claimed this month</div></div>
-      <div><div class="stat-num" id="stat-open">&mdash;</div><div class="stat-label">still open</div></div>
+    <div class="fund-card">
+      <div class="fund-label">This Month's Neighbor Fund</div>
+      <div class="fund-amounts"><span id="fund-raised">$0</span> of <span id="fund-goal">$0</span> raised</div>
+      <div class="fund-sub" id="fund-sub"></div>
+      <div class="fund-track"><div class="fund-fill" id="fund-fill" style="width:0%"></div></div>
+      <a href="#" class="fund-give-btn" id="fund-give-btn" target="_blank" rel="noopener">Give to SVdP &rarr;</a>
+      <p class="fund-note">Gifts go into one shared SVdP fund on the parish giving site — there's no way to earmark a gift to a single family. The fund covers needs like the ones below, and Vincentians update status here by hand as gifts come in, so it may lag a few days behind your giving.</p>
     </div>
 
+    <div class="section-label">Needs Bulletin Board</div>
     <div class="filters" id="filters"></div>
     <div class="board" id="board"></div>
 
@@ -164,13 +201,18 @@
 <script src="site.js"></script>
 <script>
   const CATEGORIES = ["All", "Furnishings", "Rent", "Utilities"];
-  const URGENCY_LABEL = { high: "Time-sensitive", medium: "Needed soon", low: "This month" };
-  const URGENCY_COLOR = { high: "#A8492E", medium: "#C9A24B", low: "#7C8B6F" };
   const ROTATIONS = [-2, 1.5, -1, 2, -1.5, 1, -2, 2];
 
   let NEEDS = [];
   let claimed = new Set();
   let filter = "All";
+
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
 
   function renderFilters() {
     const el = document.getElementById('filters');
@@ -179,7 +221,7 @@
       const btn = document.createElement('button');
       btn.className = 'filter-btn' + (filter === cat ? ' active' : '');
       btn.textContent = cat;
-      btn.onclick = () => { filter = cat; renderBoard(); renderStats(); };
+      btn.onclick = () => { filter = cat; renderBoard(); };
       el.appendChild(btn);
     });
   }
@@ -187,46 +229,100 @@
   function claimNeed(id) {
     claimed.add(id);
     renderBoard();
-    renderStats();
-    const toast = document.getElementById('toast');
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2600);
+    toast("Thank you. Someone from SVdP will reach out with next steps.");
+  }
+
+  function shareText(need) {
+    if (need.category === 'Furnishings') {
+      return `A neighbor near St. Luke needs a ${need.title.toLowerCase()}. Could you help? `;
+    }
+    return `A neighbor near St. Luke needs help with ${need.title.toLowerCase()} (about $${need.amount || '?'}). Gifts go to St. Luke's SVdP fund: `;
+  }
+
+  function makeShareLink(need) {
+    const a = document.createElement('a');
+    a.className = 'share-link';
+    a.href = '#';
+    a.textContent = 'Share this need →';
+    a.onclick = (e) => {
+      e.preventDefault();
+      const text = shareText(need) + window.location.href;
+      if (navigator.share) {
+        navigator.share({ text }).catch(() => {});
+      } else if (navigator.clipboard) {
+        navigator.clipboard.writeText(text);
+        toast('Share text copied — paste it to a friend.');
+      }
+    };
+    return a;
+  }
+
+  function renderStatusCard(need) {
+    const status = (need.status || 'Open');
+    const color = statusColor(status);
+    const isCovered = status.toLowerCase() === 'covered';
+    const card = document.createElement('div');
+    card.className = 'card' + (isCovered ? ' covered' : '');
+    card.innerHTML = `
+      <div class="stamp" style="color:${color};border-color:${color};">${status.toUpperCase()}</div>
+      <div>
+        <div class="status-badge" style="background:${color};">${status}</div>
+        <h3 class="card-title">${need.title || ''}</h3>
+        <p class="card-detail">${need.detail || ''}</p>
+        ${need.amount ? `<p class="amount-note">Approx. $${need.amount} — from the shared SVdP fund</p>` : ''}
+      </div>
+    `;
+    card.appendChild(makeShareLink(need));
+    return card;
+  }
+
+  function renderClaimCard(need) {
+    // A Household item is "claimed" either locally (someone just clicked "I
+    // can help") or because the sheet already shows it Covered (i.e. the
+    // distribution center already fulfilled it).
+    const sheetCovered = (need.status || '').toLowerCase() === 'covered';
+    const isClaimed = claimed.has(need.id) || sheetCovered;
+    const color = statusColor(need.status);
+    const card = document.createElement('div');
+    card.className = 'card' + (isClaimed ? ' claimed' : '');
+    card.innerHTML = `
+      <div class="stamp" style="color:${sheetCovered ? color : 'var(--sage)'};border-color:${sheetCovered ? color : 'var(--sage)'};${isClaimed ? '' : 'display:none;'}">${sheetCovered ? 'COVERED' : 'CLAIMED'}</div>
+      <div>
+        <div class="status-badge" style="background:${color};">${need.status || 'Open'}</div>
+        <h3 class="card-title">${need.title || ''}</h3>
+        <p class="card-detail">${need.detail || ''}</p>
+      </div>
+      ${sheetCovered ? '' : `
+        <button class="card-btn ${isClaimed ? 'claimed-btn' : ''}" ${isClaimed ? 'disabled' : ''}>
+          ${isClaimed ? "Thank you — we'll follow up" : "I can help with this →"}
+        </button>
+      `}
+    `;
+    if (!isClaimed) card.querySelector('button').onclick = () => claimNeed(need.id);
+    card.appendChild(makeShareLink(need));
+    return card;
   }
 
   function renderBoard() {
     const el = document.getElementById('board');
     el.innerHTML = '';
-    const active = activeNeeds(NEEDS);
-    const visible = filter === "All" ? active : active.filter(n => n.category === filter);
-    if (!visible.length) {
+    const visible = visibleNeeds(NEEDS);
+    const filtered = filter === "All" ? visible : visible.filter(n => n.category === filter);
+    if (!filtered.length) {
       el.innerHTML = '<div class="empty-note">No open needs in this category right now — thank you!</div>';
       return;
     }
-    visible.forEach((need, i) => {
-      const isClaimed = claimed.has(need.id);
-      const urgency = (need.urgency || 'medium').toLowerCase();
+    filtered.forEach((need, i) => {
       const wrap = document.createElement('div');
       wrap.className = 'card-wrap';
       wrap.style.transform = `rotate(${ROTATIONS[i % ROTATIONS.length]}deg)`;
 
+      const pinColor = statusColor(need.status);
       const pin = document.createElement('div');
       pin.className = 'card-pin';
-      pin.style.background = `radial-gradient(circle at 35% 30%, #fff8 0%, ${URGENCY_COLOR[urgency]} 40%, ${URGENCY_COLOR[urgency]} 100%)`;
+      pin.style.background = `radial-gradient(circle at 35% 30%, #fff8 0%, ${pinColor} 40%, ${pinColor} 100%)`;
 
-      const card = document.createElement('div');
-      card.className = 'card' + (isClaimed ? ' claimed' : '');
-      card.innerHTML = `
-        <div class="stamp">CLAIMED</div>
-        <div>
-          <div class="card-urgency" style="color:${URGENCY_COLOR[urgency]}">${URGENCY_LABEL[urgency] || urgency}</div>
-          <h3 class="card-title">${need.title || ''}</h3>
-          <p class="card-detail">${need.detail || ''}</p>
-        </div>
-        <button class="card-btn ${isClaimed ? 'claimed-btn' : ''}" ${isClaimed ? 'disabled' : ''}>
-          ${isClaimed ? "Thank you — we'll follow up" : "I can help with this →"}
-        </button>
-      `;
-      if (!isClaimed) card.querySelector('button').onclick = () => claimNeed(need.id);
+      const card = (need.category === 'Furnishings') ? renderClaimCard(need) : renderStatusCard(need);
 
       wrap.appendChild(pin);
       wrap.appendChild(card);
@@ -234,18 +330,25 @@
     });
   }
 
-  function renderStats() {
-    const active = activeNeeds(NEEDS);
-    document.getElementById('stat-total').textContent = active.length;
-    document.getElementById('stat-claimed').textContent = claimed.size;
-    document.getElementById('stat-open').textContent = active.length - claimed.size;
+  function renderFund() {
+    const goal = fundGoal(NEEDS);
+    const raised = effectiveFundRaised();
+    const pct = goal ? Math.min(100, Math.round((raised / goal) * 100)) : 0;
+    document.getElementById('fund-raised').textContent = `$${raised.toLocaleString()}`;
+    document.getElementById('fund-goal').textContent = `$${goal.toLocaleString()}`;
+    document.getElementById('fund-fill').style.width = pct + '%';
+    document.getElementById('fund-sub').textContent =
+      goal ? `${pct}% of this month's known rent & utility needs` : 'No open rent/utility needs right now';
+    const btn = document.getElementById('fund-give-btn');
+    if (DONATE_URL) btn.href = DONATE_URL;
+    else { btn.removeAttribute('target'); btn.href = '#'; btn.onclick = (e) => e.preventDefault(); }
   }
 
   async function init() {
     NEEDS = await loadNeeds();
     renderFilters();
     renderBoard();
-    renderStats();
+    renderFund();
   }
   init();
 </script>

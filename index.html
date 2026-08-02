@@ -75,16 +75,19 @@
   }
 
   /* ---- Needs preview ---- */
-  .stats {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 32px;
-    margin-bottom: 32px;
-    text-align: center;
+  .fund-card {
+    max-width: 420px; margin: 0 auto 28px; text-align: center;
+    padding: 20px 24px 18px; background: var(--paper);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
   }
-  .stat-num { font-family: 'Fraunces', serif; font-weight: 700; font-size: 26px; color: var(--paper); }
-  .stat-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--paperline); }
+  .fund-label {
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.2em; color: var(--rust); margin-bottom: 6px;
+  }
+  .fund-amounts { font-family: 'Fraunces', serif; font-weight: 700; font-size: 22px; color: var(--ink); margin-bottom: 10px; }
+  .fund-amounts span { color: var(--sage); }
+  .fund-track { width: 100%; height: 10px; background: var(--paperline); border-radius: 5px; overflow: hidden; }
+  .fund-fill { height: 100%; background: var(--sage); }
 
   .preview-board { display: flex; flex-wrap: wrap; justify-content: center; gap: 28px; margin-bottom: 28px; }
   .card-wrap { position: relative; width: 240px; }
@@ -101,7 +104,7 @@
   }
   .card-urgency { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 6px; }
   .card-title { font-family: 'Fraunces', serif; font-weight: 600; font-size: 17px; color: var(--ink); margin: 0 0 6px; line-height: 1.3; }
-  .card-detail { font-size: 13px; line-height: 1.5; color: var(--inktext); margin: 0; }
+  .card-detail { font-size: 13px; line-height: 1.5; color: var(--inktext); margin: 0 0 10px; }
 
   .board-cta { text-align: center; }
   .board-cta a {
@@ -182,9 +185,10 @@
     <!-- ===== Needs Bulletin Board (preview) ===== -->
     <div class="section">
       <div class="section-label">Needs Bulletin Board</div>
-      <div class="stats">
-        <div><div class="stat-num" id="stat-total">&mdash;</div><div class="stat-label">needs posted</div></div>
-        <div><div class="stat-num" id="stat-open">&mdash;</div><div class="stat-label">still open</div></div>
+      <div class="fund-card">
+        <div class="fund-label">This Month's Neighbor Fund</div>
+        <div class="fund-amounts"><span id="fund-raised">$0</span> of <span id="fund-goal">$0</span> raised</div>
+        <div class="fund-track"><div class="fund-fill" id="fund-fill" style="width:0%"></div></div>
       </div>
       <div class="preview-board" id="preview-board"></div>
       <div class="board-cta"><a href="board.html">View the full board &rarr;</a></div>
@@ -260,31 +264,39 @@
 
 <script src="site.js"></script>
 <script>
-  const URGENCY_LABEL = { high: "Time-sensitive", medium: "Needed soon", low: "This month" };
-  const URGENCY_COLOR = { high: "#A8492E", medium: "#C9A24B", low: "#7C8B6F" };
   const ROTATIONS = [-2, 1.5, -1];
 
   function renderPreview(allNeeds) {
-    const needs = activeNeeds(allNeeds);
-    document.getElementById('stat-total').textContent = needs.length;
-    document.getElementById('stat-open').textContent = needs.length;
+    const goal = fundGoal(allNeeds);
+    const raised = effectiveFundRaised();
+    const pct = goal ? Math.min(100, Math.round((raised / goal) * 100)) : 0;
+    document.getElementById('fund-raised').textContent = `$${raised.toLocaleString()}`;
+    document.getElementById('fund-goal').textContent = `$${goal.toLocaleString()}`;
+    document.getElementById('fund-fill').style.width = pct + '%';
+
+    const visible = visibleNeeds(allNeeds);
+    const statusRank = { open: 0, "partially covered": 1, covered: 2 };
+    const sorted = [...visible].sort((a, b) =>
+      (statusRank[(a.status || 'open').toLowerCase()] ?? 0) -
+      (statusRank[(b.status || 'open').toLowerCase()] ?? 0)
+    );
 
     const el = document.getElementById('preview-board');
     el.innerHTML = '';
-    needs.slice(0, 3).forEach((need, i) => {
-      const urgency = (need.urgency || 'medium').toLowerCase();
+    sorted.slice(0, 3).forEach((need, i) => {
       const wrap = document.createElement('div');
       wrap.className = 'card-wrap';
       wrap.style.transform = `rotate(${ROTATIONS[i % ROTATIONS.length]}deg)`;
 
+      const pinColor = statusColor(need.status);
       const pin = document.createElement('div');
       pin.className = 'card-pin';
-      pin.style.background = `radial-gradient(circle at 35% 30%, #fff8 0%, ${URGENCY_COLOR[urgency]} 40%, ${URGENCY_COLOR[urgency]} 100%)`;
+      pin.style.background = `radial-gradient(circle at 35% 30%, #fff8 0%, ${pinColor} 40%, ${pinColor} 100%)`;
 
       const card = document.createElement('div');
       card.className = 'card';
       card.innerHTML = `
-        <div class="card-urgency" style="color:${URGENCY_COLOR[urgency]}">${URGENCY_LABEL[urgency] || urgency}</div>
+        <div class="card-urgency" style="color:${pinColor}">${need.status || 'Open'}</div>
         <h3 class="card-title">${need.title || ''}</h3>
         <p class="card-detail">${need.detail || ''}</p>
       `;

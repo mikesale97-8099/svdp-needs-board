@@ -43,41 +43,49 @@ git push -u origin main
 
 Both `index.html`'s needs preview / results table and `board.html`'s full needs board pull from `site.js` — one place to update, both pages stay in sync.
 
-### 1. Set up your sheet
+The Needs data now comes from the **svdp-needs-board-template.xlsx** workbook (one row per home visit, with Household/Rent/Utility needs tracked side by side). `site.js` expects that exact column layout — see the workbook's own Instructions tab for the full column reference. In short:
 
-Create one Google Sheet with two tabs:
-
-**Tab "Needs"** — columns (exact header names, any order):
 ```
-id | category | title | detail | urgency | active
+ServWare ID | Initial Home Visit Date | # in Household | Summary |
+Household Items Needed? | Distribution Center Request Date | Household Items Needed | Household Need Status |
+Rent Assistance Needed? | Rent Assistance Needed | Rent Amount Needed | Rent Need Status |
+Utility Assistance Needed? | Utility Assistance Needed | Utility Need Amount | Utility Need Status |
+Overall Status | Month Posted
 ```
-- `category`: Furnishings, Rent, or Utilities (matches the filter buttons)
-- `urgency`: high, medium, or low
-- `active`: yes or no — set to "no" to pull a claimed/closed need off the board without deleting the row
 
-**Tab "Results"** — columns:
+`site.js` expands each visit row into up to 3 board cards (one per need type that's flagged "Yes"), so a family needing both rent help and a bed shows as two separate cards, sharing the same `Summary` text.
+
+- **Household items** render with the old single-claim "I can help" button — but now also respect `Household Need Status`: if the sheet already shows it Covered (distribution center fulfilled it), the card shows as covered automatically instead of waiting for a website click.
+- **Rent/Utility items** render as status-badge cards feeding the shared fund thermometer, same as before — `Rent Amount Needed` / `Utility Need Amount` are approximate context figures only, not per-family accounts, and `Rent Need Status` / `Utility Need Status` are the manual Open/Partially Covered/Covered dropdowns from the workbook.
+- The **note-worthy schema change:** there's no more `urgency` field. Card color/priority now comes entirely from status (Open = most urgent, Partially Covered, Covered = resolved) instead of a separate high/medium/low rating.
+
+**Monthly rollover** (unchanged in spirit): a need Covered in a *prior* month disappears from the board automatically; Open/Partially Covered needs keep showing regardless of age; a same-month Covered win still shows before it rolls off. This uses each expanded need's `month_posted`, taken straight from the workbook's calculated `Month Posted` column.
+
+**Tab "Results"** — already fully formula-driven inside the workbook itself (see its Instructions tab). The site just displays whatever gets published:
 ```
 month | home_visits | people_helped | furniture_requests | rent_utility_requests | financial_assistance
 ```
-- One row per month. The site totals these automatically — no need for a manual Total row.
 
-### 2. Publish each tab as CSV
+### 1. Publish both tabs as CSV
 
-For each tab:
+For each of the workbook's **Needs** and **Results** tabs:
 1. File → Share → **Publish to web**
 2. Under "Link," choose the specific tab (not "Entire Document")
 3. Choose **Comma-separated values (.csv)** as the format
 4. Click **Publish**, copy the URL it gives you
 
-### 3. Paste the URLs into the site
+### 2. Paste the URLs into the site
 
 Open `site.js`, find this block near the top:
 
 ```js
 const NEEDS_CSV_URL = "";
 const RESULTS_CSV_URL = "";
+const DONATE_URL = "";
+const FUND_RAISED = 300;
+const FUND_RAISED_MONTH = "2026-07";
 ```
 
-Paste your two published CSV URLs between the quotes, save, and re-upload `site.js` to GitHub (no need to touch `index.html` or `board.html`). Both pages will now update automatically whenever the sheet changes — no code edits needed for day-to-day updates.
+Paste your two published CSV URLs between the quotes. Also paste in your parish giving site's SVdP donation link as `DONATE_URL`. Update `FUND_RAISED` and `FUND_RAISED_MONTH` by hand each month as you check the parish giving system. Save and re-upload `site.js` to GitHub — no need to touch `index.html` or `board.html`.
 
 If a URL is left blank or the fetch fails for any reason, the page quietly falls back to the built-in sample data, so it never shows a broken page.
