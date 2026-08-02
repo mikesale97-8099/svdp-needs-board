@@ -1,10 +1,11 @@
 # St. Luke SVdP Conference — Site Mockup
 
-Three files, no build step required:
+Four files, no build step required:
 
 - `index.html` — the main content page (mission, needs preview, next drive, home visit results, campaigns, sister conferences, volunteer CTA) — this is what a QR code on a bulletin flyer should point to
 - `board.html` — the dedicated, fully-interactive Needs Bulletin Board sub-page (filters + "I can help" claim interaction). Linked to from index.html's needs preview section.
 - `site.js` — shared config and data-loading logic used by both pages (see "Google Sheet" section below)
+- `style.css` — shared stylesheet for both pages. Background is St. Luke's brand blue (`#25408E`, pulled from stluke.org). A few components (`.card`, `.fund-card`, `.header`, etc.) render at different sizes on each page, so those are scoped under `.page-board` / `.page-index` (set on each page's `<body>` tag) rather than sharing one rule — safe to edit either page's version without affecting the other.
 
 ## View it locally
 
