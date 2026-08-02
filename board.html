@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>St. Luke Parish Needs Board</title>
+<title>St. Luke SVdP Conference — Needs Board</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -12,6 +12,7 @@
     --paper: #FBF7EC; --paperline: #E7DDC4;
     --ink: #2B3A42; --inktext: #4A4436;
     --rust: #A8492E; --gold: #C9A24B; --sage: #7C8B6F;
+    --blue: #25408E;
   }
   * { box-sizing: border-box; }
   body {
@@ -33,34 +34,55 @@
   }
   .back-link:hover { opacity: 1; }
 
-  .header { text-align: center; margin-bottom: 40px; }
+  .header { text-align: center; margin-bottom: 36px; }
   .header-card {
     display: inline-block;
-    padding: 20px 32px;
+    padding: 22px 32px;
     background: var(--paper);
     box-shadow: 0 8px 20px rgba(0,0,0,0.35);
     transform: rotate(-1deg);
+    max-width: 560px;
   }
   .header-eyebrow {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.25em;
-    color: #25408E;
+    color: var(--blue);
     margin-bottom: 4px;
   }
   .header-title {
     font-family: 'Fraunces', serif;
     font-weight: 700;
-    font-size: 34px;
+    font-size: 32px;
     color: var(--ink);
-    margin: 0 0 8px;
+    margin: 0 0 6px;
+  }
+  .header-tagline {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--rust);
+    margin: 0 0 12px;
   }
   .header-sub {
     font-size: 14px;
+    line-height: 1.6;
     color: var(--inktext);
-    max-width: 420px;
+    max-width: 480px;
     margin: 0 auto;
+  }
+
+  .section { margin-bottom: 56px; }
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--paperline);
+    text-align: center;
+    margin-bottom: 18px;
   }
 
   .stats {
@@ -68,159 +90,117 @@
     flex-wrap: wrap;
     justify-content: center;
     gap: 32px;
-    margin-bottom: 40px;
+    margin-bottom: 32px;
     text-align: center;
   }
-  .stat-num {
-    font-family: 'Fraunces', serif;
-    font-weight: 700;
-    font-size: 26px;
-    color: var(--paper);
-  }
-  .stat-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: var(--paperline);
-  }
+  .stat-num { font-family: 'Fraunces', serif; font-weight: 700; font-size: 26px; color: var(--paper); }
+  .stat-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--paperline); }
 
-  .filters {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 40px;
-  }
+  .filters { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 36px; }
   .filter-btn {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px;
-    letter-spacing: 0.03em;
+    font-size: 13px; letter-spacing: 0.03em;
     padding: 6px 16px;
-    background: transparent;
-    color: var(--paperline);
+    background: transparent; color: var(--paperline);
     border: 1px solid var(--paperline);
-    cursor: pointer;
-    border-radius: 2px;
+    cursor: pointer; border-radius: 2px;
   }
   .filter-btn.active { background: var(--paper); color: var(--ink); }
 
-  .board {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 32px 32px;
-  }
-
+  .board { display: flex; flex-wrap: wrap; justify-content: center; gap: 32px; }
   .card-wrap { position: relative; width: 256px; }
   .card-pin {
-    position: absolute;
-    left: 50%; top: -10px;
-    transform: translateX(-50%);
+    position: absolute; left: 50%; top: -10px; transform: translateX(-50%);
     width: 16px; height: 16px; border-radius: 50%;
-    box-shadow: 0 2px 3px rgba(0,0,0,0.35);
-    z-index: 10;
+    box-shadow: 0 2px 3px rgba(0,0,0,0.35); z-index: 10;
   }
   .card {
-    position: relative;
-    min-height: 190px;
-    padding: 24px 20px 20px;
+    position: relative; min-height: 190px; padding: 24px 20px 20px;
     background: var(--paper);
     background-image: repeating-linear-gradient(var(--paper) 0px, var(--paper) 27px, var(--paperline) 28px);
     box-shadow: 0 6px 14px rgba(43,58,66,0.22);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    display: flex; flex-direction: column; justify-content: space-between;
     transition: transform 0.2s, opacity 0.3s, box-shadow 0.2s;
   }
   .card:not(.claimed):hover { transform: translateY(-4px); }
   .card.claimed { opacity: 0.6; box-shadow: 0 2px 6px rgba(43,58,66,0.15); }
-
-  .card-urgency {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-weight: 600;
-    margin-bottom: 6px;
-  }
-  .card-title {
-    font-family: 'Fraunces', serif;
-    font-weight: 600;
-    font-size: 18px;
-    color: var(--ink);
-    margin: 0 0 8px;
-    line-height: 1.3;
-  }
-  .card-detail {
-    font-size: 14px;
-    line-height: 1.5;
-    color: var(--inktext);
-    margin: 0;
-  }
+  .card-urgency { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 6px; }
+  .card-title { font-family: 'Fraunces', serif; font-weight: 600; font-size: 18px; color: var(--ink); margin: 0 0 8px; line-height: 1.3; }
+  .card-detail { font-size: 14px; line-height: 1.5; color: var(--inktext); margin: 0; }
   .card-btn {
-    margin-top: 16px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 14px;
-    letter-spacing: 0.03em;
-    padding: 8px 0;
-    background: var(--ink);
-    color: var(--paper);
-    border: none;
-    border-radius: 2px;
-    cursor: pointer;
+    margin-top: 16px; font-family: 'IBM Plex Mono', monospace; font-size: 14px; letter-spacing: 0.03em;
+    padding: 8px 0; background: var(--ink); color: var(--paper); border: none; border-radius: 2px; cursor: pointer;
   }
-  .card-btn.claimed-btn {
-    background: transparent;
-    color: var(--sage);
-    border: 1px solid var(--sage);
-    cursor: default;
-  }
-
+  .card-btn.claimed-btn { background: transparent; color: var(--sage); border: 1px solid var(--sage); cursor: default; }
   .stamp {
-    position: absolute;
-    right: -8px; top: -12px;
-    transform: rotate(-14deg);
-    font-family: 'IBM Plex Mono', monospace;
-    color: var(--sage);
-    border: 3px solid var(--sage);
-    border-radius: 6px;
-    padding: 2px 10px;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    opacity: 0.9;
-    mix-blend-mode: multiply;
-    display: none;
-    pointer-events: none;
+    position: absolute; right: -8px; top: -12px; transform: rotate(-14deg);
+    font-family: 'IBM Plex Mono', monospace; color: var(--sage);
+    border: 3px solid var(--sage); border-radius: 6px; padding: 2px 10px;
+    font-size: 13px; font-weight: 700; letter-spacing: 0.08em; opacity: 0.9;
+    mix-blend-mode: multiply; display: none; pointer-events: none;
   }
   .card.claimed .stamp { display: block; }
+  .empty-note {
+    text-align: center; color: var(--paperline); font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px; padding: 20px;
+  }
+
+  .drive-card {
+    max-width: 480px; margin: 0 auto; text-align: center;
+    padding: 28px 24px; background: var(--paper);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+    transform: rotate(1deg);
+  }
+  .drive-eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; color: var(--rust); margin-bottom: 8px; }
+  .drive-title { font-family: 'Fraunces', serif; font-weight: 700; font-size: 26px; color: var(--ink); margin: 0; }
+
+  .table-card {
+    background: var(--paper);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    padding: 8px;
+    overflow-x: auto;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td {
+    padding: 10px 14px; text-align: left;
+    border-bottom: 1px solid var(--paperline);
+    color: var(--inktext); white-space: nowrap;
+  }
+  th {
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--ink); font-weight: 700;
+  }
+  tr.total-row td { font-weight: 700; color: var(--ink); border-top: 2px solid var(--ink); border-bottom: none; }
+
+  .sisters { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; }
+  .sister-card {
+    width: 260px; padding: 20px; background: var(--paper);
+    box-shadow: 0 6px 14px rgba(43,58,66,0.22);
+  }
+  .sister-name { font-family: 'Fraunces', serif; font-weight: 700; font-size: 17px; color: var(--ink); margin: 0 0 6px; }
+  .sister-blurb { font-size: 13px; color: var(--inktext); line-height: 1.5; margin: 0; }
+
+  .volunteer-card {
+    max-width: 480px; margin: 0 auto; text-align: center;
+    padding: 28px 24px; background: var(--blue); color: var(--paper);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+  }
+  .volunteer-title { font-family: 'Fraunces', serif; font-weight: 700; font-size: 22px; margin: 0 0 8px; }
+  .volunteer-sub { font-size: 14px; line-height: 1.5; margin: 0 0 18px; opacity: 0.9; }
+  .volunteer-btn {
+    display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 14px;
+    background: var(--paper); color: var(--blue); padding: 10px 22px; text-decoration: none;
+  }
 
   .toast {
-    position: fixed;
-    bottom: 28px; left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    padding: 12px 20px;
-    background: var(--ink);
-    color: var(--paper);
-    font-size: 14px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-    border-radius: 2px;
-    opacity: 0;
-    transition: opacity 0.3s, transform 0.3s;
-    pointer-events: none;
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
+    padding: 12px 20px; background: var(--ink); color: var(--paper); font-size: 14px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4); border-radius: 2px;
+    opacity: 0; transition: opacity 0.3s, transform 0.3s; pointer-events: none;
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-  .footer-note {
-    text-align: center;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: #E7DDC4;
-    opacity: 0.7;
-    margin-top: 56px;
-    padding-bottom: 16px;
-  }
+  .footer-note { text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #E7DDC4; opacity: 0.7; padding-bottom: 16px; }
 </style>
 </head>
 <body>
@@ -229,20 +209,83 @@
 
     <div class="header">
       <div class="header-card">
-        <div class="header-eyebrow">St. Luke Catholic Church &middot; Parish Needs Board</div>
-        <h1 class="header-title">Our neighbors, right now</h1>
-        <p class="header-sub">These are real, current needs from home visits this month. No names — just what's needed, and how much is left to give.</p>
+        <div class="header-eyebrow">Society of St. Vincent de Paul &middot; St. Luke Conference</div>
+        <h1 class="header-title">Neighbors Helping Neighbors</h1>
+        <p class="header-tagline">A Hand Up, Not a Hand Out</p>
+        <p class="header-sub">The St. Vincent de Paul Society serves our neighbors here by visiting families privately in their homes, where clients are free to discuss their struggles and needs. Our Vincentians listen, offer humble advice, and render assistance.</p>
       </div>
     </div>
 
-    <div class="stats">
-      <div><div class="stat-num" id="stat-total">0</div><div class="stat-label">needs posted</div></div>
-      <div><div class="stat-num" id="stat-claimed">0</div><div class="stat-label">claimed this month</div></div>
-      <div><div class="stat-num" id="stat-open">0</div><div class="stat-label">still open</div></div>
+    <div class="section">
+      <div class="section-label">Needs Bulletin Board</div>
+      <div class="stats">
+        <div><div class="stat-num" id="stat-total">&mdash;</div><div class="stat-label">needs posted</div></div>
+        <div><div class="stat-num" id="stat-claimed">&mdash;</div><div class="stat-label">claimed this month</div></div>
+        <div><div class="stat-num" id="stat-open">&mdash;</div><div class="stat-label">still open</div></div>
+      </div>
+      <div class="filters" id="filters"></div>
+      <div class="board" id="board"></div>
     </div>
 
-    <div class="filters" id="filters"></div>
-    <div class="board" id="board"></div>
+    <div class="section">
+      <div class="section-label">Our Next SVdP Parish Drive</div>
+      <div class="drive-card">
+        <div class="drive-eyebrow">Now Collecting</div>
+        <h2 class="drive-title">Kitchen Shower</h2>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Home Visit Results</div>
+      <div class="table-card">
+        <table id="results-table">
+          <thead>
+            <tr>
+              <th>Month</th><th>Home Visits</th><th>People Helped</th>
+              <th>Furniture / Home Requests</th><th>Rent / Utility Requests</th>
+              <th>Financial Assistance</th>
+            </tr>
+          </thead>
+          <tbody id="results-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">2026 SVdP Parish Campaigns</div>
+      <div class="table-card">
+        <table>
+          <thead><tr><th>Campaign</th><th>When</th><th>Results</th></tr></thead>
+          <tbody>
+            <tr><td>40 Days for 40 Beds</td><td>&mdash;</td><td>&mdash;</td></tr>
+            <tr><td>Kitchen Drive</td><td>&mdash;</td><td>&mdash;</td></tr>
+            <tr><td>Blanket Drive</td><td>&mdash;</td><td>&mdash;</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Supporting Our Sister Conferences</div>
+      <div class="sisters">
+        <div class="sister-card">
+          <div class="sister-name">St. Rita</div>
+          <p class="sister-blurb">Details on how St. Luke supports the St. Rita conference go here.</p>
+        </div>
+        <div class="sister-card">
+          <div class="sister-name">Jamaica</div>
+          <p class="sister-blurb">Details on how St. Luke supports our sister conference in Jamaica go here.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="volunteer-card">
+        <h2 class="volunteer-title">Become a Volunteer</h2>
+        <p class="volunteer-sub">Join our Vincentians in serving our St. Luke neighbors with dignity and love.</p>
+        <a href="#" class="volunteer-btn">Get Involved &rarr;</a>
+      </div>
+    </div>
 
     <div class="footer-note">Updated after every home visit &middot; St. Luke Catholic Church &middot; St. Vincent de Paul Society</div>
   </div>
@@ -250,20 +293,73 @@
   <div class="toast" id="toast">Thank you. Someone from SVdP will reach out with next steps.</div>
 
 <script>
-  const NEEDS = [
-    { id: 1, category: "Furnishings", title: "Twin bed frame + mattress", detail: "Family of 4, kids sharing a room. Currently sleeping on the floor.", urgency: "high", rotate: -2 },
-    { id: 2, category: "Furnishings", title: "Kitchen table + 4 chairs", detail: "Single dad, two school-age kids. No place to eat together.", urgency: "medium", rotate: 1.5 },
-    { id: 3, category: "Rent", title: "$420 toward March rent", detail: "Grandmother raising two grandchildren, short after a car repair.", urgency: "high", rotate: -1 },
-    { id: 4, category: "Utilities", title: "Overdue electric bill, $185", detail: "Household of 3, shutoff notice received this week.", urgency: "high", rotate: 2 },
-    { id: 5, category: "Furnishings", title: "Working refrigerator", detail: "Family of 5, current fridge stopped cooling last month.", urgency: "medium", rotate: -1.5 },
-    { id: 6, category: "Rent", title: "$300 toward February rent", detail: "Mom returning to work after medical leave, one month behind.", urgency: "medium", rotate: 1 },
-    { id: 7, category: "Utilities", title: "Gas bill, $95", detail: "Elderly couple on fixed income, house has been cold.", urgency: "low", rotate: -2 },
-    { id: 8, category: "Furnishings", title: "Dresser + bedding, twin size", detail: "Newly housed family, child sleeping out of a suitcase.", urgency: "medium", rotate: 2 },
+  // ============================================================
+  // CONFIG — paste your published Google Sheet CSV URLs here.
+  // File > Share > Publish to web > select the tab > CSV.
+  // Leave as "" to use the sample data below instead.
+  // ============================================================
+  const NEEDS_CSV_URL = "";   // e.g. "https://docs.google.com/spreadsheets/d/e/XXXX/pub?gid=0&single=true&output=csv"
+  const RESULTS_CSV_URL = ""; // e.g. "https://docs.google.com/spreadsheets/d/e/XXXX/pub?gid=123&single=true&output=csv"
+
+  // Expected Needs sheet columns: id, category, title, detail, urgency (high/medium/low), active (yes/no)
+  const SAMPLE_NEEDS = [
+    { id: "1", category: "Furnishings", title: "Twin bed frame + mattress", detail: "Family of 4, kids sharing a room. Currently sleeping on the floor.", urgency: "high" },
+    { id: "2", category: "Furnishings", title: "Kitchen table + 4 chairs", detail: "Single dad, two school-age kids. No place to eat together.", urgency: "medium" },
+    { id: "3", category: "Rent", title: "$420 toward March rent", detail: "Grandmother raising two grandchildren, short after a car repair.", urgency: "high" },
+    { id: "4", category: "Utilities", title: "Overdue electric bill, $185", detail: "Household of 3, shutoff notice received this week.", urgency: "high" },
   ];
+
+  // Expected Results sheet columns: month, home_visits, people_helped, furniture_requests, rent_utility_requests, financial_assistance
+  const SAMPLE_RESULTS = [
+    { month: "June 2026", home_visits: "15", people_helped: "30", furniture_requests: "7", rent_utility_requests: "8", financial_assistance: "2500" },
+    { month: "July 2026", home_visits: "10", people_helped: "22", furniture_requests: "5", rent_utility_requests: "5", financial_assistance: "3000" },
+  ];
+
+  function parseCSV(text) {
+    const rows = [];
+    let row = [], field = '', inQuotes = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i], next = text[i + 1];
+      if (inQuotes) {
+        if (c === '"' && next === '"') { field += '"'; i++; }
+        else if (c === '"') { inQuotes = false; }
+        else { field += c; }
+      } else {
+        if (c === '"') inQuotes = true;
+        else if (c === ',') { row.push(field); field = ''; }
+        else if (c === '\n' || c === '\r') {
+          if (field !== '' || row.length) { row.push(field); rows.push(row); row = []; field = ''; }
+          if (c === '\r' && next === '\n') i++;
+        } else field += c;
+      }
+    }
+    if (field !== '' || row.length) { row.push(field); rows.push(row); }
+    const headers = rows.shift().map(h => h.trim().toLowerCase().replace(/\s+/g, '_'));
+    return rows.filter(r => r.length && r.some(v => v.trim() !== '')).map(r => {
+      const obj = {};
+      headers.forEach((h, idx) => obj[h] = (r[idx] || '').trim());
+      return obj;
+    });
+  }
+
+  async function loadCSV(url, fallback) {
+    if (!url) return fallback;
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('fetch failed');
+      return parseCSV(await res.text());
+    } catch (e) {
+      console.warn('Falling back to sample data for', url, e);
+      return fallback;
+    }
+  }
+
   const CATEGORIES = ["All", "Furnishings", "Rent", "Utilities"];
   const URGENCY_LABEL = { high: "Time-sensitive", medium: "Needed soon", low: "This month" };
   const URGENCY_COLOR = { high: "#A8492E", medium: "#C9A24B", low: "#7C8B6F" };
+  const ROTATIONS = [-2, 1.5, -1, 2, -1.5, 1, -2, 2];
 
+  let NEEDS = [];
   let claimed = new Set();
   let filter = "All";
 
@@ -274,14 +370,15 @@
       const btn = document.createElement('button');
       btn.className = 'filter-btn' + (filter === cat ? ' active' : '');
       btn.textContent = cat;
-      btn.onclick = () => { filter = cat; render(); };
+      btn.onclick = () => { filter = cat; renderBoard(); renderStats(); };
       el.appendChild(btn);
     });
   }
 
   function claimNeed(id) {
     claimed.add(id);
-    render();
+    renderBoard();
+    renderStats();
     const toast = document.getElementById('toast');
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 2600);
@@ -290,35 +387,37 @@
   function renderBoard() {
     const el = document.getElementById('board');
     el.innerHTML = '';
-    const visible = filter === "All" ? NEEDS : NEEDS.filter(n => n.category === filter);
-    visible.forEach(need => {
+    const active = NEEDS.filter(n => (n.active || 'yes').toLowerCase() !== 'no');
+    const visible = filter === "All" ? active : active.filter(n => n.category === filter);
+    if (!visible.length) {
+      el.innerHTML = '<div class="empty-note">No open needs in this category right now — thank you!</div>';
+      return;
+    }
+    visible.forEach((need, i) => {
       const isClaimed = claimed.has(need.id);
+      const urgency = (need.urgency || 'medium').toLowerCase();
       const wrap = document.createElement('div');
       wrap.className = 'card-wrap';
-      wrap.style.transform = `rotate(${need.rotate}deg)`;
+      wrap.style.transform = `rotate(${ROTATIONS[i % ROTATIONS.length]}deg)`;
 
       const pin = document.createElement('div');
       pin.className = 'card-pin';
-      pin.style.background = `radial-gradient(circle at 35% 30%, #fff8 0%, ${URGENCY_COLOR[need.urgency]} 40%, ${URGENCY_COLOR[need.urgency]} 100%)`;
+      pin.style.background = `radial-gradient(circle at 35% 30%, #fff8 0%, ${URGENCY_COLOR[urgency]} 40%, ${URGENCY_COLOR[urgency]} 100%)`;
 
       const card = document.createElement('div');
       card.className = 'card' + (isClaimed ? ' claimed' : '');
-
       card.innerHTML = `
         <div class="stamp">CLAIMED</div>
         <div>
-          <div class="card-urgency" style="color:${URGENCY_COLOR[need.urgency]}">${URGENCY_LABEL[need.urgency]}</div>
-          <h3 class="card-title">${need.title}</h3>
-          <p class="card-detail">${need.detail}</p>
+          <div class="card-urgency" style="color:${URGENCY_COLOR[urgency]}">${URGENCY_LABEL[urgency] || urgency}</div>
+          <h3 class="card-title">${need.title || ''}</h3>
+          <p class="card-detail">${need.detail || ''}</p>
         </div>
         <button class="card-btn ${isClaimed ? 'claimed-btn' : ''}" ${isClaimed ? 'disabled' : ''}>
           ${isClaimed ? "Thank you — we'll follow up" : "I can help with this →"}
         </button>
       `;
-
-      if (!isClaimed) {
-        card.querySelector('button').onclick = () => claimNeed(need.id);
-      }
+      if (!isClaimed) card.querySelector('button').onclick = () => claimNeed(need.id);
 
       wrap.appendChild(pin);
       wrap.appendChild(card);
@@ -327,18 +426,57 @@
   }
 
   function renderStats() {
-    document.getElementById('stat-total').textContent = NEEDS.length;
+    const active = NEEDS.filter(n => (n.active || 'yes').toLowerCase() !== 'no');
+    document.getElementById('stat-total').textContent = active.length;
     document.getElementById('stat-claimed').textContent = claimed.size;
-    document.getElementById('stat-open').textContent = NEEDS.length - claimed.size;
+    document.getElementById('stat-open').textContent = active.length - claimed.size;
   }
 
-  function render() {
+  function renderResults(rows) {
+    const body = document.getElementById('results-body');
+    body.innerHTML = '';
+    let totals = { home_visits: 0, people_helped: 0, furniture_requests: 0, rent_utility_requests: 0, financial_assistance: 0 };
+    rows.forEach(r => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${r.month || ''}</td>
+        <td>${r.home_visits || ''}</td>
+        <td>${r.people_helped || ''}</td>
+        <td>${r.furniture_requests || ''}</td>
+        <td>${r.rent_utility_requests || ''}</td>
+        <td>${r.financial_assistance ? '$' + Number(r.financial_assistance).toLocaleString() : ''}</td>
+      `;
+      body.appendChild(tr);
+      totals.home_visits += Number(r.home_visits) || 0;
+      totals.people_helped += Number(r.people_helped) || 0;
+      totals.furniture_requests += Number(r.furniture_requests) || 0;
+      totals.rent_utility_requests += Number(r.rent_utility_requests) || 0;
+      totals.financial_assistance += Number(r.financial_assistance) || 0;
+    });
+    const totalRow = document.createElement('tr');
+    totalRow.className = 'total-row';
+    totalRow.innerHTML = `
+      <td>Total</td>
+      <td>${totals.home_visits}</td>
+      <td>${totals.people_helped}</td>
+      <td>${totals.furniture_requests}</td>
+      <td>${totals.rent_utility_requests}</td>
+      <td>$${totals.financial_assistance.toLocaleString()}</td>
+    `;
+    body.appendChild(totalRow);
+  }
+
+  async function init() {
+    NEEDS = await loadCSV(NEEDS_CSV_URL, SAMPLE_NEEDS);
     renderFilters();
     renderBoard();
     renderStats();
+
+    const results = await loadCSV(RESULTS_CSV_URL, SAMPLE_RESULTS);
+    renderResults(results);
   }
 
-  render();
+  init();
 </script>
 </body>
 </html>
