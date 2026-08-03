@@ -222,6 +222,7 @@ function expandVisitsToNeeds(visits) {
   const needs = [];
   visits.forEach(v => {
     const monthPosted = v.month_posted || '';
+    const datePosted = v.initial_home_visit_date || '';
     const detail = v.summary || '';
 
     const hasSpecial = (v['special_need_item?'] || '').toLowerCase() === 'yes';
@@ -237,6 +238,7 @@ function expandVisitsToNeeds(visits) {
         status: v.special_need_status || 'Open',
         amount: '',
         month_posted: monthPosted,
+        date_posted: datePosted,
       });
     } else if (hasWarehouse) {
       needs.push({
@@ -248,6 +250,7 @@ function expandVisitsToNeeds(visits) {
         status: v.warehouse_status || 'Open',
         amount: '',
         month_posted: monthPosted,
+        date_posted: datePosted,
       });
     }
 
@@ -260,6 +263,7 @@ function expandVisitsToNeeds(visits) {
         status: v.rent_need_status || 'Open',
         amount: v.rent_amount_needed ? String(toNumber(v.rent_amount_needed)) : '',
         month_posted: monthPosted,
+        date_posted: datePosted,
       });
     }
     if ((v['utility_assistance_needed?'] || '').toLowerCase() === 'yes') {
@@ -271,6 +275,7 @@ function expandVisitsToNeeds(visits) {
         status: v.utility_need_status || 'Open',
         amount: v.utility_need_amount ? String(toNumber(v.utility_need_amount)) : '',
         month_posted: monthPosted,
+        date_posted: datePosted,
       });
     }
   });
@@ -390,6 +395,24 @@ function buildSnapshotSentence(needs, resultsRows, snap) {
   }
 
   return `<p>${activity}</p><p>${s}</p>`;
+}
+
+// Board ordering: actionable cards first (Special Need claim cards, since
+// they need a specific person to step up), then Rent/Utility (actionable
+// via the general Give button), then Warehouse info-only cards last (no
+// action needed from anyone). Newest visit first within each tier, so new
+// cards actually get noticed instead of getting buried.
+function boardPriority(need) {
+  if (need.category === 'Furnishings' && need.subtype === 'special') return 0;
+  if (need.category === 'Rent' || need.category === 'Utilities') return 1;
+  return 2; // Furnishings / warehouse
+}
+function sortForBoard(needs) {
+  return [...needs].sort((a, b) => {
+    const pa = boardPriority(a), pb = boardPriority(b);
+    if (pa !== pb) return pa - pb;
+    return (b.date_posted || '').localeCompare(a.date_posted || '');
+  });
 }
 
 const STATUS_COLOR = { open: "#A8492E", "partially covered": "#C9A24B", covered: "#7C8B6F" };

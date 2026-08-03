@@ -133,7 +133,8 @@ Thank you!`;
         ${need.amount ? `<p class="amount-note">Approx. $${need.amount} — from the shared SVdP fund</p>` : ''}
       </div>
     `;
-    card.appendChild(makeShareLink(need));
+    // Share link hidden for now, per request — keep makeShareLink() intact
+    // for when this gets revisited. card.appendChild(makeShareLink(need));
     return card;
   }
 
@@ -160,7 +161,8 @@ Thank you!`;
       `}
     `;
     if (!isClaimed) card.querySelector('button').onclick = () => claimNeed(need);
-    card.appendChild(makeShareLink(need));
+    // Share link hidden for now, per request — keep makeShareLink() intact
+    // for when this gets revisited. card.appendChild(makeShareLink(need));
     return card;
   }
 
@@ -188,7 +190,8 @@ Thank you!`;
     const el = document.getElementById('board');
     el.innerHTML = '';
     const visible = visibleNeeds(NEEDS);
-    const filtered = filter === "All" ? visible : visible.filter(n => n.category === filter);
+    const filteredRaw = filter === "All" ? visible : visible.filter(n => n.category === filter);
+    const filtered = sortForBoard(filteredRaw);
     if (!filtered.length) {
       el.innerHTML = '<div class="empty-note">No open needs in this category right now — thank you!</div>';
       return;
