@@ -150,20 +150,21 @@
     let totals = { home_visits: 0, people_helped: 0, furniture_requests: 0, rent_utility_requests: 0, financial_assistance: 0 };
     rows.forEach(r => {
       const tr = document.createElement('tr');
+      const fa = toNumber(r.financial_assistance);
       tr.innerHTML = `
         <td>${r.month || ''}</td>
         <td>${r.home_visits || ''}</td>
         <td>${r.people_helped || ''}</td>
         <td>${r.furniture_requests || ''}</td>
         <td>${r.rent_utility_requests || ''}</td>
-        <td>${r.financial_assistance ? '$' + Number(r.financial_assistance).toLocaleString() : ''}</td>
+        <td>$${fa.toLocaleString()}</td>
       `;
       body.appendChild(tr);
-      totals.home_visits += Number(r.home_visits) || 0;
-      totals.people_helped += Number(r.people_helped) || 0;
-      totals.furniture_requests += Number(r.furniture_requests) || 0;
-      totals.rent_utility_requests += Number(r.rent_utility_requests) || 0;
-      totals.financial_assistance += Number(r.financial_assistance) || 0;
+      totals.home_visits += toNumber(r.home_visits);
+      totals.people_helped += toNumber(r.people_helped);
+      totals.furniture_requests += toNumber(r.furniture_requests);
+      totals.rent_utility_requests += toNumber(r.rent_utility_requests);
+      totals.financial_assistance += fa;
     });
     const totalRow = document.createElement('tr');
     totalRow.className = 'total-row';

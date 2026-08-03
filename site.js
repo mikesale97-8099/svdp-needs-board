@@ -4,8 +4,8 @@
 // Leave as "" to use the sample data below instead.
 // Both index.html and board.html read from this one file.
 // ============================================================
-const NEEDS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTLCe9tt9PADbPtBSjNblVbCTdoa37wI6T0MGHVb8mBQkSu91kYBBZR4hI8dGBJ75-Pb4WE4CzhL-oE/pub?gid=1084595956&single=true&output=csv";   // published CSV of the "Needs" tab (one row per home visit)
-const RESULTS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTLCe9tt9PADbPtBSjNblVbCTdoa37wI6T0MGHVb8mBQkSu91kYBBZR4hI8dGBJ75-Pb4WE4CzhL-oE/pub?gid=557003829&single=true&output=csv"; // published CSV of the "Results" tab (already formula-computed in the workbook)
+const NEEDS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTLCe9tt9PADbPtBSjNblVbCTdoa37wI6T0MGHVb8mBQkSu91kYBBZR4hI8dGBJ75-Pb4WE4CzhL-oE/pub?gid=1084595956&single=true&output=csv";
+const RESULTS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTLCe9tt9PADbPtBSjNblVbCTdoa37wI6T0MGHVb8mBQkSu91kYBBZR4hI8dGBJ75-Pb4WE4CzhL-oE/pub?gid=557003829&single=true&output=csv";
 
 // Where "Give" buttons send people — the ONE shared SVdP giving option on the
 // parish site. There is no way to earmark a gift to a specific family: all
@@ -20,6 +20,15 @@ const DONATE_URL = ""; // e.g. "https://www.fellowshiponegiving.com/App/Form/XXX
 // updated, the thermometer shows $0 automatically rather than stale data.
 const FUND_RAISED = 300;
 const FUND_RAISED_MONTH = "2026-07";
+
+// Google Sheets exports currency-formatted cells with the $ and thousands
+// commas baked into the CSV text (e.g. "$1,590"). Number() chokes on that,
+// so every dollar figure needs to go through this first.
+function toNumber(val) {
+  if (val === null || val === undefined || val === '') return 0;
+  const n = Number(String(val).replace(/[^0-9.-]/g, ''));
+  return isNaN(n) ? 0 : n;
+}
 
 function currentMonthKey() {
   const d = new Date();
@@ -128,7 +137,24 @@ async function loadCSV(url, fallback) {
   }
 }
 
-async function loadVisits() { return loadCSV(NEEDS_CSV_URL, SAMPLE_NEEDS); }
+async function loadVisits() {
+  if (!NEEDS_CSV_URL) return SAMPLE_NEEDS;
+  try {
+    const res = await fetch(NEEDS_CSV_URL);
+    if (!res.ok) throw new Error('fetch failed');
+    let text = await res.text();
+    // The Needs tab has a merged group-header row ABOVE the real per-column
+    // headers (e.g. "Household Items Needed?" spanning 4 columns). When
+    // published to CSV that row comes through as literal, mostly-blank
+    // text — strip it so row 2's real headers are what parseCSV reads.
+    const firstBreak = text.indexOf('\n');
+    if (firstBreak !== -1) text = text.slice(firstBreak + 1);
+    return parseCSV(text);
+  } catch (e) {
+    console.warn('Falling back to sample data for Needs CSV', e);
+    return SAMPLE_NEEDS;
+  }
+}
 async function loadResults() { return loadCSV(RESULTS_CSV_URL, SAMPLE_RESULTS); }
 
 // ------------------------------------------------------------
@@ -160,7 +186,7 @@ function expandVisitsToNeeds(visits) {
         title: v.rent_assistance_needed || 'Rent Assistance',
         detail,
         status: v.rent_need_status || 'Open',
-        amount: v.rent_amount_needed || '',
+        amount: v.rent_amount_needed ? String(toNumber(v.rent_amount_needed)) : '',
         month_posted: monthPosted,
       });
     }
@@ -171,7 +197,7 @@ function expandVisitsToNeeds(visits) {
         title: v.utility_assistance_needed || 'Utility Assistance',
         detail,
         status: v.utility_need_status || 'Open',
-        amount: v.utility_need_amount || '',
+        amount: v.utility_need_amount ? String(toNumber(v.utility_need_amount)) : '',
         month_posted: monthPosted,
       });
     }
@@ -203,7 +229,7 @@ function fundGoal(needs) {
   return visibleNeeds(needs)
     .filter(n => (n.category === 'Rent' || n.category === 'Utilities') && n.amount)
     .filter(n => (n.status || 'Open').toLowerCase() !== 'covered')
-    .reduce((sum, n) => sum + (Number(n.amount) || 0), 0);
+    .reduce((sum, n) => sum + toNumber(n.amount), 0);
 }
 
 const STATUS_COLOR = { open: "#A8492E", "partially covered": "#C9A24B", covered: "#7C8B6F" };
