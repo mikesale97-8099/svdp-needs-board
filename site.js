@@ -14,14 +14,6 @@ const LEDGER_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSOs8ZXp
 // giving and disbursement.
 const DONATE_URL = ""; // e.g. "https://www.fellowshiponegiving.com/App/Form/XXXX"
 
-// FUND_RAISED is a manually-updated number — how much has come in toward this
-// month's known need, as best a Vincentian can estimate from the parish giving
-// system. It is NOT live-tracked. FUND_RAISED_MONTH pairs it with a month
-// ("YYYY-MM"); if the site is opened in a later month before this has been
-// updated, the thermometer shows $0 automatically rather than stale data.
-const FUND_RAISED = 300;
-const FUND_RAISED_MONTH = "2026-07";
-
 // Google Sheets exports currency-formatted cells with the $ and thousands
 // commas baked into the CSV text (e.g. "$1,590"). Number() chokes on that,
 // so every dollar figure needs to go through this first.
@@ -42,8 +34,16 @@ function formatMonthName(dateStr) {
   if (isNaN(d)) return '';
   return d.toLocaleString('en-US', { month: 'long' });
 }
-function effectiveFundRaised() {
-  return FUND_RAISED_MONTH === currentMonthKey() ? FUND_RAISED : 0;
+// "August 2026" -> "Aug-26" (for tight table columns)
+function formatMonthAbbrev(monthLabel) {
+  if (!monthLabel) return '';
+  const parts = monthLabel.trim().split(/\s+/);
+  if (parts.length < 2) return monthLabel;
+  const [monthName, year] = parts;
+  const d = new Date(`${monthName} 1, ${year}`);
+  if (isNaN(d)) return monthLabel;
+  const abbrev = d.toLocaleString('en-US', { month: 'short' });
+  return `${abbrev}-${String(year).slice(-2)}`;
 }
 
 // ------------------------------------------------------------
@@ -235,68 +235,13 @@ const SAMPLE_BALANCE_SNAPSHOTS = [
 
 async function loadBalanceSnapshots() { return loadCSV(LEDGER_CSV_URL, SAMPLE_BALANCE_SNAPSHOTS); }
 
-// Uses the LAST row (most recent snapshot). Balance shown on the gauge is
-// funds budgeted this month minus known outstanding needs — how much room
-// is left, not a running bank-style total.
+// Uses the LAST row (most recent snapshot) for funds_budgeted — that part
+// stays manual/treasurer-reported. The Balance Snapshot tab's own
+// outstanding_needs column is NOT used here anymore (see outstandingNeedsSummary
+// below) — outstanding needs and family count have to come from the same
+// live source or they'd drift out of sync with each other.
 function latestSnapshot(rows) {
   return rows.length ? rows[rows.length - 1] : null;
-}
-function currentBalance(rows) {
-  const snap = latestSnapshot(rows);
-  if (!snap) return 0;
-  return toNumber(snap.funds_budgeted) - toNumber(snap.outstanding_needs);
-}
-
-// Tune these as the conference gets a feel for what's actually "healthy" —
-// these are starting guesses, not tied to any formula.
-const GAUGE_LOW = 500;       // below this: needs replenishing
-const GAUGE_HEALTHY = 1500;  // above this: healthy reserve
-const GAUGE_SCALE_MAX = 4000; // top of the visual scale; balances above this peg the needle at max
-
-function gaugeStatus(balance) {
-  if (balance < GAUGE_LOW) return { label: "Needs replenishing", color: "#A8492E" };
-  if (balance < GAUGE_HEALTHY) return { label: "Watch closely", color: "#C9A24B" };
-  return { label: "Healthy reserve", color: "#7C8B6F" };
-}
-
-function polarToCartesian(cx, cy, r, angleDeg) {
-  const rad = (angleDeg * Math.PI) / 180;
-  return { x: cx + r * Math.cos(rad), y: cy - r * Math.sin(rad) };
-}
-function describeArc(cx, cy, r, startDeg, endDeg) {
-  const start = polarToCartesian(cx, cy, r, startDeg);
-  const end = polarToCartesian(cx, cy, r, endDeg);
-  const largeArc = Math.abs(startDeg - endDeg) > 180 ? 1 : 0;
-  const sweep = startDeg > endDeg ? 1 : 0;
-  return `M ${start.x} ${start.y} A ${r} ${r} 0 ${largeArc} ${sweep} ${end.x} ${end.y}`;
-}
-
-// Renders a semicircle gauge as an SVG string. angle 180deg = left (value 0),
-// 0deg = right (value GAUGE_SCALE_MAX), sweeping up through 90deg (top).
-function gaugeSVG(balance, size) {
-  size = size || 220;
-  const cx = size / 2, cy = size * 0.6, r = size * 0.41;
-  const lowFrac = GAUGE_LOW / GAUGE_SCALE_MAX;
-  const healthyFrac = GAUGE_HEALTHY / GAUGE_SCALE_MAX;
-  const valueFrac = Math.max(0, Math.min(1, balance / GAUGE_SCALE_MAX));
-  const angle = (f) => 180 - f * 180;
-
-  const redArc = describeArc(cx, cy, r, angle(0), angle(lowFrac));
-  const yellowArc = describeArc(cx, cy, r, angle(lowFrac), angle(healthyFrac));
-  const greenArc = describeArc(cx, cy, r, angle(healthyFrac), angle(1));
-  const needleAngle = angle(valueFrac);
-  const needleTip = polarToCartesian(cx, cy, r * 0.78, needleAngle);
-  const strokeW = size * 0.073;
-
-  return `
-    <svg width="${size}" height="${size * 0.62}" viewBox="0 0 ${size} ${size * 0.62}">
-      <path d="${redArc}" fill="none" stroke="#A8492E" stroke-width="${strokeW}" stroke-linecap="round"/>
-      <path d="${yellowArc}" fill="none" stroke="#C9A24B" stroke-width="${strokeW}" stroke-linecap="round"/>
-      <path d="${greenArc}" fill="none" stroke="#7C8B6F" stroke-width="${strokeW}" stroke-linecap="round"/>
-      <line x1="${cx}" y1="${cy}" x2="${needleTip.x}" y2="${needleTip.y}" stroke="#2B3A42" stroke-width="3" stroke-linecap="round"/>
-      <circle cx="${cx}" cy="${cy}" r="${size * 0.032}" fill="#2B3A42"/>
-    </svg>
-  `;
 }
 
 // Applies the monthly rollover rule: a Covered need from a PRIOR month drops
@@ -319,6 +264,51 @@ function fundGoal(needs) {
     .filter(n => (n.category === 'Rent' || n.category === 'Utilities') && n.amount)
     .filter(n => (n.status || 'Open').toLowerCase() !== 'covered')
     .reduce((sum, n) => sum + toNumber(n.amount), 0);
+}
+
+// Live from the Needs tab: total outstanding $ AND the number of distinct
+// families behind it (a family can have both a Rent and a Utility need —
+// counted as 2 needs but 1 family, via the shared visit id prefix on each
+// expanded need's id, e.g. "121-R" and "121-U" both belong to family 121).
+function outstandingNeedsSummary(needs) {
+  const open = visibleNeeds(needs)
+    .filter(n => (n.category === 'Rent' || n.category === 'Utilities') && n.amount)
+    .filter(n => (n.status || 'Open').toLowerCase() !== 'covered');
+  const total = open.reduce((sum, n) => sum + toNumber(n.amount), 0);
+  const families = new Set(open.map(n => n.id.split('-')[0]));
+  return { total, families: families.size };
+}
+
+// Builds the full "This Month, At a Glance" sentence as an HTML string.
+function buildSnapshotSentence(needs, snap) {
+  if (!snap) return '';
+  const month = formatMonthName(snap.snapshot_date) || 'this month';
+  const funds = toNumber(snap.funds_budgeted);
+  const { total: needsTotal, families } = outstandingNeedsSummary(needs);
+  const gap = funds - needsTotal;
+  const avgRequest = families ? needsTotal / families : 0;
+  const familyWord = families === 1 ? 'family' : 'families';
+
+  let s = `In <strong>${month}</strong>, SVdP has <strong>$${funds.toLocaleString()}</strong> in available funds`;
+
+  if (families > 0) {
+    s += ` and requests from <strong>${families}</strong> ${familyWord} totaling <strong>$${needsTotal.toLocaleString()}</strong> for rent/utility assistance.`;
+  } else {
+    s += ` and no open rent or utility requests right now.`;
+  }
+
+  if (gap >= 0) {
+    s += ` This leaves <strong>$${gap.toLocaleString()}</strong> for future requests`;
+    if (avgRequest > 0) {
+      const mm = Math.max(1, Math.round(gap / avgRequest));
+      s += ` &mdash; approximately <strong>${mm}</strong> more request${mm === 1 ? '' : 's'} at this month's typical size.`;
+    } else {
+      s += `.`;
+    }
+  } else {
+    s += ` That's <strong>$${Math.abs(gap).toLocaleString()}</strong> more than what's currently budgeted &mdash; additional gifts will be needed to fully cover it.`;
+  }
+  return s;
 }
 
 const STATUS_COLOR = { open: "#A8492E", "partially covered": "#C9A24B", covered: "#7C8B6F" };

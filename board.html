@@ -20,22 +20,11 @@
       </div>
     </div>
 
-    <div class="dual-cards">
-      <div class="fund-card">
-        <div class="fund-label">This Month, At a Glance</div>
-        <p class="snapshot-sentence" id="snapshot-sentence"></p>
-        <a href="#" class="fund-give-btn" id="fund-give-btn" target="_blank" rel="noopener">Give to SVdP &rarr;</a>
-        <p class="fund-note">Gifts go into one shared SVdP fund on the parish giving site — there's no way to earmark a gift to a single family. Vincentians update the snapshot below by hand periodically, so it may lag a few days behind your giving.</p>
-      </div>
-
-      <div class="balance-card">
-        <div class="fund-label">Funds &minus; Needs</div>
-        <div class="gauge-wrap" id="gauge-wrap"></div>
-        <div class="gauge-amount" id="gauge-amount">$0</div>
-        <div class="gauge-status" id="gauge-status"></div>
-        <div class="gauge-assist" id="gauge-assist"></div>
-        <p class="fund-note">The gap between what's budgeted this month and what's currently outstanding — a periodic snapshot, not a live running total. Detailed money-tracking lives with our treasurer; this is just the headline number.</p>
-      </div>
+    <div class="glance-card">
+      <div class="fund-label">This Month, At a Glance</div>
+      <p class="snapshot-sentence" id="snapshot-sentence"></p>
+      <a href="#" class="fund-give-btn" id="fund-give-btn" target="_blank" rel="noopener">Give to SVdP &rarr;</a>
+      <p class="fund-note">Gifts go into one shared SVdP fund on the parish giving site — there's no way to earmark a gift to a single family. Vincentians update the snapshot behind this by hand periodically, so it may lag a few days behind your giving.</p>
     </div>
 
     <div class="section-label">Needs Bulletin Board</div>
@@ -179,35 +168,10 @@
     });
   }
 
-  function renderBalance(snapshotRows) {
+  function renderGlance(needs, snapshotRows) {
     const snap = latestSnapshot(snapshotRows);
-    const balance = currentBalance(snapshotRows);
-    const status = gaugeStatus(balance);
-
-    document.getElementById('gauge-wrap').innerHTML = gaugeSVG(balance, 200);
-    document.getElementById('gauge-amount').textContent = `$${balance.toLocaleString()}`;
-    const statusEl = document.getElementById('gauge-status');
-    statusEl.textContent = status.label;
-    statusEl.style.color = status.color;
-
-    const assistEl = document.getElementById('gauge-assist');
-    if (assistEl) {
-      assistEl.textContent = snap
-        ? `$${toNumber(snap.assistance_provided_this_month).toLocaleString()} in assistance provided this month`
-        : '';
-    }
-
     const sentenceEl = document.getElementById('snapshot-sentence');
-    if (sentenceEl) {
-      if (snap) {
-        const month = formatMonthName(snap.snapshot_date) || 'this month';
-        const funds = toNumber(snap.funds_budgeted);
-        const needs = toNumber(snap.outstanding_needs);
-        sentenceEl.innerHTML = `In <strong>${month}</strong>, SVdP has <strong>$${funds.toLocaleString()}</strong> in available funds and <strong>$${needs.toLocaleString()}</strong> in outstanding needs.`;
-      } else {
-        sentenceEl.textContent = '';
-      }
-    }
+    if (sentenceEl) sentenceEl.innerHTML = buildSnapshotSentence(needs, snap);
 
     const btn = document.getElementById('fund-give-btn');
     if (btn) {
@@ -220,7 +184,7 @@
     NEEDS = await loadNeeds();
     renderFilters();
     renderBoard();
-    renderBalance(await loadBalanceSnapshots());
+    renderGlance(NEEDS, await loadBalanceSnapshots());
   }
   init();
 </script>
