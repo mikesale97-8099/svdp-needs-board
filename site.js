@@ -4,9 +4,9 @@
 // Leave as "" to use the sample data below instead.
 // Both index.html and board.html read from this one file.
 // ============================================================
-const NEEDS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQfHbKTRIbnDPqch2FCNGXKjbmXG8ReltAk5-KahXqQ6MgHY-yscQ9-IJ7TEbSTreAffgx8FL2LchoQ/pub?gid=1892373341&single=true&output=csv";
-const RESULTS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQfHbKTRIbnDPqch2FCNGXKjbmXG8ReltAk5-KahXqQ6MgHY-yscQ9-IJ7TEbSTreAffgx8FL2LchoQ/pub?gid=769314143&single=true&output=csv";
-const LEDGER_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQfHbKTRIbnDPqch2FCNGXKjbmXG8ReltAk5-KahXqQ6MgHY-yscQ9-IJ7TEbSTreAffgx8FL2LchoQ/pub?gid=500042350&single=true&output=csv"; // published CSV of the "Balance Snapshot" tab (feeds the balance gauge)
+const NEEDS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTDMXdM3W2GaX0PHTRyjk6GcUKXSBOyWJ0wE3i9XGo6rapbM0Q4rBA4SstV5kALSdZhvHkw5sDlp7yl/pub?gid=2128174808&single=true&output=csv";
+const RESULTS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTDMXdM3W2GaX0PHTRyjk6GcUKXSBOyWJ0wE3i9XGo6rapbM0Q4rBA4SstV5kALSdZhvHkw5sDlp7yl/pub?gid=92684007&single=true&output=csv";
+const LEDGER_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTDMXdM3W2GaX0PHTRyjk6GcUKXSBOyWJ0wE3i9XGo6rapbM0Q4rBA4SstV5kALSdZhvHkw5sDlp7yl/pub?gid=1331525201&single=true&output=csv"; // published CSV of the "Balance Snapshot" tab (feeds the balance gauge)
 
 // Where "Give" buttons send people — the ONE shared SVdP giving option on the
 // parish site. There is no way to earmark a gift to a specific family: all
@@ -286,23 +286,25 @@ async function loadNeeds() {
 // Balance Snapshot / balance gauge — a simple hand-reported snapshot
 // (not a transactional ledger; detailed money-tracking lives elsewhere
 // with whoever minds the funds). Separate from the "known need"
-// thermometer above.
+// thermometer above. The sheet itself now also derives outstanding_needs,
+// assistance_provided_this_month, and available_balance via formulas keyed
+// on the Needs tab's Date Covered columns — but the site never reads those,
+// it only needs snapshot_date and funds_available from here.
 // ------------------------------------------------------------
 const SAMPLE_BALANCE_SNAPSHOTS = [
-  { snapshot_date: "2026-07-05", funds_budgeted: "1700", outstanding_needs: "900", assistance_provided_this_month: "250" },
-  { snapshot_date: "2026-07-12", funds_budgeted: "1700", outstanding_needs: "605", assistance_provided_this_month: "395" },
-  { snapshot_date: "2026-07-19", funds_budgeted: "1650", outstanding_needs: "420", assistance_provided_this_month: "395" },
-  { snapshot_date: "2026-07-26", funds_budgeted: "1700", outstanding_needs: "185", assistance_provided_this_month: "395" },
-  { snapshot_date: "2026-08-02", funds_budgeted: "1700", outstanding_needs: "605", assistance_provided_this_month: "0" },
+  { snapshot_date: "2026-07-05", funds_available: "1700" },
+  { snapshot_date: "2026-07-12", funds_available: "1700" },
+  { snapshot_date: "2026-07-19", funds_available: "1650" },
+  { snapshot_date: "2026-07-26", funds_available: "1700" },
+  { snapshot_date: "2026-08-02", funds_available: "1700" },
 ];
 
 async function loadBalanceSnapshots() { return loadCSV(LEDGER_CSV_URL, SAMPLE_BALANCE_SNAPSHOTS); }
 
-// Uses the LAST row (most recent snapshot) for funds_budgeted — that part
-// stays manual/treasurer-reported. The Balance Snapshot tab's own
-// outstanding_needs column is NOT used here anymore (see outstandingNeedsSummary
-// below) — outstanding needs and family count have to come from the same
-// live source or they'd drift out of sync with each other.
+// Uses the LAST row (most recent snapshot) for funds_available — that part
+// stays manual/treasurer-reported. Outstanding needs and family count come
+// from the Needs tab directly (see outstandingNeedsSummary below) — they
+// have to come from the same live source or they'd drift out of sync.
 function latestSnapshot(rows) {
   return rows.length ? rows[rows.length - 1] : null;
 }
@@ -361,7 +363,7 @@ function buildSnapshotSentence(needs, resultsRows, snap) {
     activity = `In <strong>${month}</strong>, SVdP continues visiting families across our parish community.`;
   }
 
-  const funds = toNumber(snap.funds_budgeted);
+  const funds = toNumber(snap.funds_available);
   const { total: needsTotal, families } = outstandingNeedsSummary(needs);
   const gap = funds - needsTotal;
   const avgRequest = families ? needsTotal / families : 0;

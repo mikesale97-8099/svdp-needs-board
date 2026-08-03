@@ -93,30 +93,22 @@ Paste your two published CSV URLs between the quotes. Also paste in your parish 
 
 If a URL is left blank or the fetch fails for any reason, the page quietly falls back to the built-in sample data, so it never shows a broken page.
 
-## SVdP Balance Gauge
+## This Month, At a Glance
 
-Separate from the "known need" thermometer, both pages now show a **balance gauge** next to it — a semicircle dial showing this month's budgeted funds minus known outstanding needs.
+Both pages show a compact "at a glance" card with a two-paragraph summary — home visits and assistance given this month, then available funds vs. outstanding requests — instead of a separate gauge widget (an earlier design; removed in favor of plain sentences, which tested better).
 
-This is deliberately **not** a transactional ledger — the conference's detailed money-tracking lives elsewhere with whoever minds the funds. It reads from the workbook's **Balance Snapshot** tab: a simple, hand-entered row every week or so with four plain numbers (no formulas):
+This is deliberately **not** a transactional ledger — the conference's detailed money-tracking lives elsewhere with whoever minds the funds. It reads from the workbook's **Balance Snapshot** tab, which only has **two manual columns**:
 
 ```
-snapshot_date | funds_budgeted | outstanding_needs | assistance_provided_this_month
+snapshot_date | funds_available
 ```
 
-The gauge always reads the **last row** — `funds_budgeted − outstanding_needs` — as the current balance. `assistance_provided_this_month` displays as a small stat next to the gauge on `board.html` (not the compact preview on `index.html`, to keep that one tight).
+Everything else on that tab (`outstanding_needs`, `assistance_provided_this_month`, `available_balance`) is a **formula** computed from the Needs tab's `Rent Date Covered` / `Utility Date Covered` columns — see the workbook's own Instructions tab for the exact formulas. The site itself only ever reads `snapshot_date` and `funds_available` from this tab; the other columns exist for the treasurer's own reference and aren't consumed by `site.js`.
 
-Publish that tab as CSV the same way as the others, then paste its URL into `site.js`:
+Because those formulas ask a historical question ("was this still outstanding as of THIS row's date?") using real covered-dates rather than a status that keeps changing, **old rows never need to be manually locked or frozen** — add a new row each week and every row, old or new, stays correct indefinitely.
+
+Publish the tab as CSV the same way as the others, then paste its URL into `site.js`:
 
 ```js
 const LEDGER_CSV_URL = "";
 ```
-
-The needle's red/yellow/green zones are controlled by three constants right above the gauge code in `site.js`:
-
-```js
-const GAUGE_LOW = 500;        // below this: needs replenishing
-const GAUGE_HEALTHY = 1500;   // above this: healthy reserve
-const GAUGE_SCALE_MAX = 4000; // top of the visual scale — balances above this peg the needle at max
-```
-
-These are starting guesses, not derived from anything — adjust them once the conference has a feel for what a healthy month-to-month margin actually looks like. The current sample snapshot data lands at $1,095 (Watch closely / yellow zone), comfortably inside the $4,000 scale.
