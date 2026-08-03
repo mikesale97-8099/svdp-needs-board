@@ -45,19 +45,20 @@ git push -u origin main
 
 Both `index.html`'s needs preview / results table and `board.html`'s full needs board pull from `site.js` — one place to update, both pages stay in sync.
 
-The Needs data now comes from the **svdp-needs-board-template.xlsx** workbook (one row per home visit, with Household/Rent/Utility needs tracked side by side). `site.js` expects that exact column layout — see the workbook's own Instructions tab for the full column reference. In short:
+The Needs data now comes from the **svdp-needs-board-template.xlsx** workbook (one row per home visit, with Warehouse/Special Need/Rent/Utility needs tracked side by side). `site.js` expects that exact column layout — see the workbook's own Instructions tab for the full column reference. In short:
 
 ```
 ServWare ID | Initial Home Visit Date | # in Household | Summary |
-Household Items Needed? | Distribution Center Request Date | Household Items Needed | Household Need Status |
+Warehouse Item Needed? | Distribution Center Request Date | Warehouse Item | Warehouse Status |
+Special Need Item? | Special Need Item | Special Need Status | Household Combined Status |
 Rent Assistance Needed? | Rent Assistance Needed | Rent Amount Needed | Rent Need Status |
 Utility Assistance Needed? | Utility Assistance Needed | Utility Need Amount | Utility Need Status |
 Overall Status | Month Posted
 ```
 
-`site.js` expands each visit row into up to 3 board cards (one per need type that's flagged "Yes"), so a family needing both rent help and a bed shows as two separate cards, sharing the same `Summary` text.
+`site.js` expands each visit row into board cards (one per need type that's flagged "Yes"), so a family needing both rent help and a bed shows as two separate cards, sharing the same `Summary` text.
 
-- **Household items** render with the old single-claim "I can help" button — but now also respect `Household Need Status`: if the sheet already shows it Covered (distribution center fulfilled it), the card shows as covered automatically instead of waiting for a website click.
+- **Household items are tracked two ways:** most go through the SVdP central warehouse (Warehouse columns) — no parishioner action needed, tracked purely for record-keeping. Occasionally an item isn't available through the warehouse and needs a parishioner to step up (Special Need columns). **The board shows only ONE household card per visit** — the Special Need if one exists (with the "I can help" claim button), otherwise the Warehouse item as a plain, non-interactive "SVdP Warehouse" info card. Both still count toward the `furniture_requests` figure in Results either way, even though only one ever renders on the board.
 - **Rent/Utility items** render as status-badge cards feeding the shared fund thermometer, same as before — `Rent Amount Needed` / `Utility Need Amount` are approximate context figures only, not per-family accounts, and `Rent Need Status` / `Utility Need Status` are the manual Open/Partially Covered/Covered dropdowns from the workbook.
 - The **note-worthy schema change:** there's no more `urgency` field. Card color/priority now comes entirely from status (Open = most urgent, Partially Covered, Covered = resolved) instead of a separate high/medium/low rating.
 

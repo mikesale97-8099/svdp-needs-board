@@ -62,8 +62,9 @@ const SAMPLE_NEEDS = [
   {
     servware_id: "1", initial_home_visit_date: "2026-08-02", "#_in_household": "4",
     summary: "Family of 4, kids sharing a room. Currently sleeping on the floor.",
-    "household_items_needed?": "Yes", distribution_center_request_date: "",
-    household_items_needed: "Twin bed frame + mattress", household_need_status: "Open",
+    "warehouse_item_needed?": "Yes", distribution_center_request_date: "",
+    warehouse_item: "Twin bed frame + mattress", warehouse_status: "Open",
+    "special_need_item?": "", special_need_item: "", special_need_status: "",
     "rent_assistance_needed?": "", rent_assistance_needed: "", rent_amount_needed: "", rent_need_status: "",
     "utility_assistance_needed?": "", utility_assistance_needed: "", utility_need_amount: "", utility_need_status: "",
     overall_status: "Active", month_posted: "2026-08",
@@ -71,8 +72,9 @@ const SAMPLE_NEEDS = [
   {
     servware_id: "3", initial_home_visit_date: "2026-07-30", "#_in_household": "3",
     summary: "Grandmother raising two grandchildren, short after a car repair.",
-    "household_items_needed?": "", distribution_center_request_date: "",
-    household_items_needed: "", household_need_status: "",
+    "warehouse_item_needed?": "", distribution_center_request_date: "",
+    warehouse_item: "", warehouse_status: "",
+    "special_need_item?": "", special_need_item: "", special_need_status: "",
     "rent_assistance_needed?": "Yes", rent_assistance_needed: "March Rent Assistance", rent_amount_needed: "420", rent_need_status: "Open",
     "utility_assistance_needed?": "", utility_assistance_needed: "", utility_need_amount: "", utility_need_status: "",
     overall_status: "Active", month_posted: "2026-07",
@@ -80,8 +82,9 @@ const SAMPLE_NEEDS = [
   {
     servware_id: "4", initial_home_visit_date: "2026-07-28", "#_in_household": "3",
     summary: "Household of 3, shutoff notice received this week.",
-    "household_items_needed?": "", distribution_center_request_date: "",
-    household_items_needed: "", household_need_status: "",
+    "warehouse_item_needed?": "", distribution_center_request_date: "",
+    warehouse_item: "", warehouse_status: "",
+    "special_need_item?": "", special_need_item: "", special_need_status: "",
     "rent_assistance_needed?": "", rent_assistance_needed: "", rent_amount_needed: "", rent_need_status: "",
     "utility_assistance_needed?": "Yes", utility_assistance_needed: "Overdue Electric Bill", utility_need_amount: "185", utility_need_status: "Partially Covered",
     overall_status: "Active", month_posted: "2026-07",
@@ -89,8 +92,9 @@ const SAMPLE_NEEDS = [
   {
     servware_id: "6", initial_home_visit_date: "2026-07-21", "#_in_household": "4",
     summary: "Mom returning to work after medical leave, one month behind.",
-    "household_items_needed?": "", distribution_center_request_date: "",
-    household_items_needed: "", household_need_status: "",
+    "warehouse_item_needed?": "", distribution_center_request_date: "",
+    warehouse_item: "", warehouse_status: "",
+    "special_need_item?": "", special_need_item: "", special_need_status: "",
     "rent_assistance_needed?": "Yes", rent_assistance_needed: "February Rent Assistance", rent_amount_needed: "300", rent_need_status: "Covered",
     "utility_assistance_needed?": "", utility_assistance_needed: "", utility_need_amount: "", utility_need_status: "",
     overall_status: "Inactive", month_posted: "2026-07",
@@ -98,11 +102,36 @@ const SAMPLE_NEEDS = [
   {
     servware_id: "7", initial_home_visit_date: "2026-07-18", "#_in_household": "2",
     summary: "Elderly couple on fixed income, house has been cold.",
-    "household_items_needed?": "", distribution_center_request_date: "",
-    household_items_needed: "", household_need_status: "",
+    "warehouse_item_needed?": "", distribution_center_request_date: "",
+    warehouse_item: "", warehouse_status: "",
+    "special_need_item?": "", special_need_item: "", special_need_status: "",
     "rent_assistance_needed?": "", rent_assistance_needed: "", rent_amount_needed: "", rent_need_status: "",
     "utility_assistance_needed?": "Yes", utility_assistance_needed: "Gas Bill", utility_need_amount: "120", utility_need_status: "Open",
     overall_status: "Active", month_posted: "2026-07",
+  },
+  {
+    // Has BOTH a warehouse item and a special need — the board shows only
+    // the special need (claimable); the warehouse item still counts in
+    // Results but never renders its own card.
+    servware_id: "127", initial_home_visit_date: "2026-08-12", "#_in_household": "4",
+    summary: "Family needs both a kitchen table and help with utilities.",
+    "warehouse_item_needed?": "Yes", distribution_center_request_date: "",
+    warehouse_item: "Kitchen table + chairs", warehouse_status: "Open",
+    "special_need_item?": "Yes", special_need_item: "High chair", special_need_status: "Open",
+    "rent_assistance_needed?": "", rent_assistance_needed: "", rent_amount_needed: "", rent_need_status: "",
+    "utility_assistance_needed?": "Yes", utility_assistance_needed: "Water Bill", utility_need_amount: "85", utility_need_status: "Open",
+    overall_status: "Active", month_posted: "2026-08",
+  },
+  {
+    // Special need only, no warehouse item at all.
+    servware_id: "129", initial_home_visit_date: "2026-08-16", "#_in_household": "3",
+    summary: "Family needs a microwave — not available through the warehouse this cycle.",
+    "warehouse_item_needed?": "", distribution_center_request_date: "",
+    warehouse_item: "", warehouse_status: "",
+    "special_need_item?": "Yes", special_need_item: "Microwave", special_need_status: "Open",
+    "rent_assistance_needed?": "", rent_assistance_needed: "", rent_amount_needed: "", rent_need_status: "",
+    "utility_assistance_needed?": "", utility_assistance_needed: "", utility_need_amount: "", utility_need_status: "",
+    overall_status: "Active", month_posted: "2026-08",
   },
 ];
 
@@ -174,9 +203,14 @@ async function loadVisits() {
 async function loadResults() { return loadCSV(RESULTS_CSV_URL, SAMPLE_RESULTS); }
 
 // ------------------------------------------------------------
-// Expand each visit row into up to 3 board cards (Household item,
-// Rent, Utility) — this is the bridge between the workbook's
-// one-row-per-visit shape and the board's one-card-per-need display.
+// Expand each visit row into board cards — this is the bridge between the
+// workbook's one-row-per-visit shape and the board's one-card-per-need
+// display. Household items are special: a visit tracks a Warehouse item
+// and a Special Need item INDEPENDENTLY (both count toward Results), but
+// the board only ever shows ONE household card per visit — the Special
+// Need if one exists (claimable, "I can help"), otherwise the Warehouse
+// item (informational only, no button — most items are fulfilled this way
+// with no parishioner action needed).
 // ------------------------------------------------------------
 function expandVisitsToNeeds(visits) {
   const needs = [];
@@ -184,17 +218,33 @@ function expandVisitsToNeeds(visits) {
     const monthPosted = v.month_posted || '';
     const detail = v.summary || '';
 
-    if ((v['household_items_needed?'] || '').toLowerCase() === 'yes') {
+    const hasSpecial = (v['special_need_item?'] || '').toLowerCase() === 'yes';
+    const hasWarehouse = (v['warehouse_item_needed?'] || '').toLowerCase() === 'yes';
+
+    if (hasSpecial) {
       needs.push({
         id: `${v.servware_id}-H`,
         category: 'Furnishings',
-        title: v.household_items_needed || 'Household item',
+        subtype: 'special',
+        title: v.special_need_item || 'Household item',
         detail,
-        status: v.household_need_status || 'Open',
-        amount: '', // no dollar figure tracked for household items — fulfilled via distribution center
+        status: v.special_need_status || 'Open',
+        amount: '',
+        month_posted: monthPosted,
+      });
+    } else if (hasWarehouse) {
+      needs.push({
+        id: `${v.servware_id}-H`,
+        category: 'Furnishings',
+        subtype: 'warehouse',
+        title: v.warehouse_item || 'Household item',
+        detail,
+        status: v.warehouse_status || 'Open',
+        amount: '',
         month_posted: monthPosted,
       });
     }
+
     if ((v['rent_assistance_needed?'] || '').toLowerCase() === 'yes') {
       needs.push({
         id: `${v.servware_id}-R`,

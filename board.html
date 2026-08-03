@@ -145,6 +145,26 @@
     return card;
   }
 
+  // Most household items go through SVdP's central warehouse — no
+  // parishioner action needed. Informational only: status badge, no claim
+  // button, no share link (there's nothing for a parishioner to help with).
+  function renderWarehouseCard(need) {
+    const status = (need.status || 'Open');
+    const color = statusColor(status);
+    const isCovered = status.toLowerCase() === 'covered';
+    const card = document.createElement('div');
+    card.className = 'card' + (isCovered ? ' covered' : '');
+    card.innerHTML = `
+      <div>
+        <div class="status-badge" style="background:${color};">${status}</div>
+        <h3 class="card-title">${need.title || ''}</h3>
+        <p class="card-detail">${need.detail || ''}</p>
+      </div>
+      <div class="warehouse-tag">SVdP Warehouse</div>
+    `;
+    return card;
+  }
+
   function renderBoard() {
     const el = document.getElementById('board');
     el.innerHTML = '';
@@ -164,7 +184,12 @@
       pin.className = 'card-pin';
       pin.style.background = `radial-gradient(circle at 35% 30%, #fff8 0%, ${pinColor} 40%, ${pinColor} 100%)`;
 
-      const card = (need.category === 'Furnishings') ? renderClaimCard(need) : renderStatusCard(need);
+      let card;
+      if (need.category === 'Furnishings') {
+        card = need.subtype === 'special' ? renderClaimCard(need) : renderWarehouseCard(need);
+      } else {
+        card = renderStatusCard(need);
+      }
 
       wrap.appendChild(pin);
       wrap.appendChild(card);

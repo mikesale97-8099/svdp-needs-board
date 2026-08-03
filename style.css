@@ -59,6 +59,11 @@ body {
   padding: 8px 0; background: var(--ink); color: var(--paper); border: none; border-radius: 2px; cursor: pointer;
 }
 .page-board .card-btn.claimed-btn { background: transparent; color: var(--sage); border: 1px solid var(--sage); cursor: default; }
+.page-board .warehouse-tag {
+  margin-top: 16px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.05em;
+  text-transform: uppercase; text-align: center; padding: 8px 0;
+  color: var(--inktext); opacity: 0.7; border-top: 1px dashed var(--paperline);
+}
 .page-board .stamp {
   position: absolute; right: -8px; top: -12px; transform: rotate(-14deg);
   font-family: 'IBM Plex Mono', monospace;
