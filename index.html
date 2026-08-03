@@ -13,9 +13,8 @@
     <div class="header">
       <div class="header-card">
         <div class="header-eyebrow">Society of St. Vincent de Paul &middot; St. Luke Conference</div>
-        <h1 class="header-title">Neighbors Helping Neighbors</h1>
-        <p class="header-tagline">A Hand Up, Not a Hand Out</p>
-        <p class="header-sub">The St. Vincent de Paul Society conference at St. Luke visits families privately in their homes, where neighbors are free to discuss their struggles and needs. Our Vincentians listen, offer humble advice, and render assistance. We also coordinate annual parish drives and support sister conferences beyond our own.</p>
+        <h1 class="header-title">Love thy Neighbor</h1>
+        <p class="header-sub">Volunteers of the St. Vincent de Paul Society conference at St. Luke visit families privately in their homes, where we can discuss their struggles and needs. Our Vincentians listen, offer humble advice, and render assistance. We also lead annual parish SVdP drives and support our sister conferences.</p>
       </div>
     </div>
 
@@ -92,7 +91,7 @@
       <div class="volunteer-card">
         <h2 class="volunteer-title">Become a Volunteer</h2>
         <p class="volunteer-sub">Join our Vincentians in serving our St. Luke neighbors with dignity and love.</p>
-        <a href="#" class="volunteer-btn">Get Involved &rarr;</a>
+        <a href="volunteer.html" class="volunteer-btn">Get Involved &rarr;</a>
       </div>
     </div>
 
@@ -123,12 +122,14 @@
       pin.className = 'card-pin';
       pin.style.background = `radial-gradient(circle at 35% 30%, #fff8 0%, ${pinColor} 40%, ${pinColor} 100%)`;
 
+      const isWarehouse = need.category === 'Furnishings' && need.subtype === 'warehouse';
       const card = document.createElement('div');
       card.className = 'card';
       card.innerHTML = `
         <div class="card-urgency" style="color:${pinColor}">${need.status || 'Open'}</div>
         <h3 class="card-title">${need.title || ''}</h3>
         <p class="card-detail">${need.detail || ''}</p>
+        ${isWarehouse ? '<div class="warehouse-tag">SVdP Warehouse</div>' : ''}
       `;
       wrap.appendChild(pin);
       wrap.appendChild(card);

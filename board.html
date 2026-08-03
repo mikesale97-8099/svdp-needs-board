@@ -68,10 +68,26 @@
     });
   }
 
-  function claimNeed(id) {
-    claimed.add(id);
+  function claimNeed(need) {
+    claimed.add(need.id);
     renderBoard();
-    toast("Thank you. Someone from SVdP will reach out with next steps.");
+    toast("Opening an email to notify SVdP — please hit send to complete your claim.");
+
+    const subject = `SVdP Needs Board: I can help with "${need.title}"`;
+    const body =
+`Hi,
+
+I'd like to help with this need from the St. Luke SVdP Needs Board:
+
+Item: ${need.title}
+Details: ${need.detail || ''}
+
+My name:
+Best way to reach me:
+
+Thank you!`;
+    const mailto = `mailto:${CLAIM_NOTIFY_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailto;
   }
 
   function shareText(need) {
@@ -140,7 +156,7 @@
         </button>
       `}
     `;
-    if (!isClaimed) card.querySelector('button').onclick = () => claimNeed(need.id);
+    if (!isClaimed) card.querySelector('button').onclick = () => claimNeed(need);
     card.appendChild(makeShareLink(need));
     return card;
   }

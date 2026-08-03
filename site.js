@@ -14,6 +14,12 @@ const LEDGER_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQfHbKTR
 // giving and disbursement.
 const DONATE_URL = "give.html"; // placeholder — swap for St. Luke's real online giving link once the SVdP designation is live there
 
+// When someone clicks "I can help" on a Special Need item, we open a
+// pre-filled email to this address so a real person actually finds out.
+// This is a stopgap — no record persists anywhere except that inbox, and
+// it relies on the sender actually hitting "send" in their email client.
+const CLAIM_NOTIFY_EMAIL = "maccsale@sbcglobal.net";
+
 // Google Sheets exports currency-formatted cells with the $ and thousands
 // commas baked into the CSV text (e.g. "$1,590"). Number() chokes on that,
 // so every dollar figure needs to go through this first.
