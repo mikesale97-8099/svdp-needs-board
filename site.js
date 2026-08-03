@@ -356,7 +356,7 @@ function buildSnapshotSentence(needs, resultsRows, snap) {
     const visits = toNumber(results.home_visits);
     const assistance = toNumber(results.financial_assistance);
     const visitWord = visits === 1 ? 'home' : 'homes';
-    activity = `In <strong>${month}</strong>, SVdP has visited <strong>${visits}</strong> ${visitWord}, given <strong>$${assistance.toLocaleString()}</strong> in rent/utility assistance and provided much needed furniture/home goods for our neighbors in need.`;
+    activity = `In <strong>${month}</strong>, SVdP visited <strong>${visits}</strong> ${visitWord}, gave <strong>$${assistance.toLocaleString()}</strong> in rent/utility assistance, and provided furniture/home goods to neighbors in need.`;
   } else {
     activity = `In <strong>${month}</strong>, SVdP continues visiting families across our parish community.`;
   }
