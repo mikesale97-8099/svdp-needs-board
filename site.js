@@ -12,7 +12,7 @@ const LEDGER_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSOs8ZXp
 // parish site. There is no way to earmark a gift to a specific family: all
 // gifts go into one fund that SVdP draws from, with a natural lag between
 // giving and disbursement.
-const DONATE_URL = ""; // e.g. "https://www.fellowshiponegiving.com/App/Form/XXXX"
+const DONATE_URL = "give.html"; // placeholder — swap for St. Luke's real online giving link once the SVdP designation is live there
 
 // Google Sheets exports currency-formatted cells with the $ and thousands
 // commas baked into the CSV text (e.g. "$1,590"). Number() chokes on that,
@@ -33,6 +33,13 @@ function formatMonthName(dateStr) {
   const d = new Date(dateStr + 'T00:00:00');
   if (isNaN(d)) return '';
   return d.toLocaleString('en-US', { month: 'long' });
+}
+// "2026-08-02" -> "August 2026" (matches the Results tab's "month" column)
+function formatMonthYear(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr + 'T00:00:00');
+  if (isNaN(d)) return '';
+  return d.toLocaleString('en-US', { month: 'long', year: 'numeric' });
 }
 // "August 2026" -> "Aug-26" (for tight table columns)
 function formatMonthAbbrev(monthLabel) {
@@ -279,20 +286,35 @@ function outstandingNeedsSummary(needs) {
   return { total, families: families.size };
 }
 
-// Builds the full "This Month, At a Glance" sentence as an HTML string.
-function buildSnapshotSentence(needs, snap) {
+// Builds the full "This Month, At a Glance" block as two <p> paragraphs.
+// Paragraph 1 (activity) pulls from the matching Results row for this month.
+// Paragraph 2 (funds/needs) is unchanged in logic from before.
+function buildSnapshotSentence(needs, resultsRows, snap) {
   if (!snap) return '';
   const month = formatMonthName(snap.snapshot_date) || 'this month';
+  const monthYear = formatMonthYear(snap.snapshot_date);
+  const results = (resultsRows || []).find(r => r.month === monthYear);
+
+  let activity;
+  if (results) {
+    const visits = toNumber(results.home_visits);
+    const assistance = toNumber(results.financial_assistance);
+    const visitWord = visits === 1 ? 'home' : 'homes';
+    activity = `In <strong>${month}</strong>, SVdP has visited <strong>${visits}</strong> ${visitWord}, given <strong>$${assistance.toLocaleString()}</strong> in rent/utility assistance and provided much needed furniture/home goods for our neighbors in need.`;
+  } else {
+    activity = `In <strong>${month}</strong>, SVdP continues visiting families across our parish community.`;
+  }
+
   const funds = toNumber(snap.funds_budgeted);
   const { total: needsTotal, families } = outstandingNeedsSummary(needs);
   const gap = funds - needsTotal;
   const avgRequest = families ? needsTotal / families : 0;
   const familyWord = families === 1 ? 'family' : 'families';
 
-  let s = `In <strong>${month}</strong>, SVdP has <strong>$${funds.toLocaleString()}</strong> in available funds`;
+  let s = `We have <strong>$${funds.toLocaleString()}</strong> in available funds`;
 
   if (families > 0) {
-    s += ` and requests from <strong>${families}</strong> ${familyWord} totaling <strong>$${needsTotal.toLocaleString()}</strong> for rent/utility assistance.`;
+    s += ` and outstanding requests from <strong>${families}</strong> ${familyWord} totaling <strong>$${needsTotal.toLocaleString()}</strong> for rent/utility assistance.`;
   } else {
     s += ` and no open rent or utility requests right now.`;
   }
@@ -308,7 +330,8 @@ function buildSnapshotSentence(needs, snap) {
   } else {
     s += ` That's <strong>$${Math.abs(gap).toLocaleString()}</strong> more than what's currently budgeted &mdash; additional gifts will be needed to fully cover it.`;
   }
-  return s;
+
+  return `<p>${activity}</p><p>${s}</p>`;
 }
 
 const STATUS_COLOR = { open: "#A8492E", "partially covered": "#C9A24B", covered: "#7C8B6F" };

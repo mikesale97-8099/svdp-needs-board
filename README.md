@@ -1,11 +1,12 @@
 # St. Luke SVdP Conference — Site Mockup
 
-Four files, no build step required:
+Five files, no build step required:
 
 - `index.html` — the main content page (mission, needs preview, next drive, home visit results, campaigns, sister conferences, volunteer CTA) — this is what a QR code on a bulletin flyer should point to
 - `board.html` — the dedicated, fully-interactive Needs Bulletin Board sub-page (filters + "I can help" claim interaction). Linked to from index.html's needs preview section.
+- `give.html` — a **placeholder** giving page mockup, styled to look like a page on St. Luke's site, with "SVdP — Families in Need" pre-selected as the fund. `DONATE_URL` in `site.js` currently points here. **Swap it for St. Luke's real online giving link** once that platform has an SVdP designation set up — this page does not process real payments, and says so clearly at the top.
 - `site.js` — shared config and data-loading logic used by both pages (see "Google Sheet" section below)
-- `style.css` — shared stylesheet for both pages. Background is St. Luke's brand blue (`#25408E`, pulled from stluke.org). A few components (`.card`, `.fund-card`, `.header`, etc.) render at different sizes on each page, so those are scoped under `.page-board` / `.page-index` (set on each page's `<body>` tag) rather than sharing one rule — safe to edit either page's version without affecting the other.
+- `style.css` — shared stylesheet for both pages. Background is St. Luke's brand blue (`#25408E`, pulled from stluke.org). A few components (`.card`, `.glance-card`, `.header`, etc.) render at different sizes on each page, so those are scoped under `.page-board` / `.page-index` (set on each page's `<body>` tag) rather than sharing one rule — safe to edit either page's version without affecting the other.
 
 ## View it locally
 

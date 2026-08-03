@@ -22,9 +22,13 @@
 
     <div class="glance-card">
       <div class="fund-label">This Month, At a Glance</div>
-      <p class="snapshot-sentence" id="snapshot-sentence"></p>
+      <div class="snapshot-sentence" id="snapshot-sentence"></div>
       <a href="#" class="fund-give-btn" id="fund-give-btn" target="_blank" rel="noopener">Give to SVdP &rarr;</a>
-      <p class="fund-note">Gifts go into one shared SVdP fund on the parish giving site — there's no way to earmark a gift to a single family. Vincentians update the snapshot behind this by hand periodically, so it may lag a few days behind your giving.</p>
+      <p class="thank-you-note">Thank you for your compassion and generosity.</p>
+      <details class="giving-details">
+        <summary>How does giving work?</summary>
+        <p>Gifts go into one shared SVdP fund on the parish giving site — there's no way to earmark a gift to a single family. Vincentians update the snapshot behind this by hand periodically, so it may lag a few days behind your giving.</p>
+      </details>
     </div>
 
     <div class="section-label">Needs Bulletin Board</div>
@@ -168,10 +172,10 @@
     });
   }
 
-  function renderGlance(needs, snapshotRows) {
+  function renderGlance(needs, resultsRows, snapshotRows) {
     const snap = latestSnapshot(snapshotRows);
     const sentenceEl = document.getElementById('snapshot-sentence');
-    if (sentenceEl) sentenceEl.innerHTML = buildSnapshotSentence(needs, snap);
+    if (sentenceEl) sentenceEl.innerHTML = buildSnapshotSentence(needs, resultsRows, snap);
 
     const btn = document.getElementById('fund-give-btn');
     if (btn) {
@@ -184,7 +188,7 @@
     NEEDS = await loadNeeds();
     renderFilters();
     renderBoard();
-    renderGlance(NEEDS, await loadBalanceSnapshots());
+    renderGlance(NEEDS, await loadResults(), await loadBalanceSnapshots());
   }
   init();
 </script>

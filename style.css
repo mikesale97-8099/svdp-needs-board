@@ -135,14 +135,30 @@ body {
   font-size: 16px; line-height: 1.6; color: var(--ink);
   margin: 0 0 18px; font-family: 'Source Serif 4', serif;
 }
+.page-board .snapshot-sentence p { margin: 0 0 12px; }
+.page-board .snapshot-sentence p:last-child { margin-bottom: 0; }
 .page-board .snapshot-sentence strong { font-family: 'Fraunces', serif; color: var(--rust); }
 .page-board .fund-give-btn {
   display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 14px;
   background: var(--blue); color: var(--paper); padding: 11px 26px; text-decoration: none; border-radius: 2px;
 }
-.page-board .fund-note {
+.page-board .thank-you-note {
+  font-family: 'Fraunces', serif; font-style: italic; font-weight: 600;
+  font-size: 18px; line-height: 1.5; color: var(--rust);
+  max-width: 420px; margin: 18px auto 0; padding-top: 16px;
+  border-top: 1px solid var(--paperline);
+}
+.page-board .giving-details { margin-top: 10px; }
+.page-board .giving-details summary {
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--sage); cursor: pointer; list-style: none;
+}
+.page-board .giving-details summary::-webkit-details-marker { display: none; }
+.page-board .giving-details summary:hover { color: var(--ink); }
+.page-board .giving-details[open] summary { color: var(--ink); margin-bottom: 8px; }
+.page-board .giving-details p {
   font-size: 12px; line-height: 1.6; color: var(--inktext); opacity: 0.85;
-  max-width: 420px; margin: 16px auto 0;
+  max-width: 420px; margin: 0 auto; text-align: center;
 }
 .page-board .card-wrap { position: relative; width: 256px; }
 .page-board .card {
@@ -278,14 +294,30 @@ body {
   font-size: 14px; line-height: 1.6; color: var(--ink);
   margin: 0 0 14px; font-family: 'Source Serif 4', serif;
 }
+.page-index .snapshot-sentence p { margin: 0 0 10px; }
+.page-index .snapshot-sentence p:last-child { margin-bottom: 0; }
 .page-index .snapshot-sentence strong { font-family: 'Fraunces', serif; color: var(--rust); }
 .page-index .fund-give-btn {
   display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 13px;
   background: var(--blue); color: var(--paper); padding: 9px 22px; text-decoration: none; border-radius: 2px;
 }
-.page-index .fund-note {
+.page-index .thank-you-note {
+  font-family: 'Fraunces', serif; font-style: italic; font-weight: 600;
+  font-size: 15px; line-height: 1.5; color: var(--rust);
+  max-width: 380px; margin: 14px auto 0; padding-top: 12px;
+  border-top: 1px solid var(--paperline);
+}
+.page-index .giving-details { margin-top: 8px; }
+.page-index .giving-details summary {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--sage); cursor: pointer; list-style: none;
+}
+.page-index .giving-details summary::-webkit-details-marker { display: none; }
+.page-index .giving-details summary:hover { color: var(--ink); }
+.page-index .giving-details[open] summary { color: var(--ink); margin-bottom: 6px; }
+.page-index .giving-details p {
   font-size: 11px; line-height: 1.5; color: var(--inktext); opacity: 0.85;
-  max-width: 380px; margin: 12px auto 0;
+  max-width: 380px; margin: 0 auto; text-align: center;
 }
 .page-index .card-wrap { position: relative; width: 240px; }
 .page-index .card {
