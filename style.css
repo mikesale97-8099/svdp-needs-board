@@ -256,6 +256,9 @@ body {
   transform: rotate(-1deg);
   max-width: 560px;
 }
+.page-index .site-logo {
+  height: 40px; margin-bottom: 12px;
+}
 .page-index .header-eyebrow {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 11px;
