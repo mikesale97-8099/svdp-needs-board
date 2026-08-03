@@ -4,9 +4,9 @@
 // Leave as "" to use the sample data below instead.
 // Both index.html and board.html read from this one file.
 // ============================================================
-const NEEDS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTLCe9tt9PADbPtBSjNblVbCTdoa37wI6T0MGHVb8mBQkSu91kYBBZR4hI8dGBJ75-Pb4WE4CzhL-oE/pub?gid=1084595956&single=true&output=csv";
-const RESULTS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTLCe9tt9PADbPtBSjNblVbCTdoa37wI6T0MGHVb8mBQkSu91kYBBZR4hI8dGBJ75-Pb4WE4CzhL-oE/pub?gid=557003829&single=true&output=csv";
-const LEDGER_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSOs8ZXpsfAJ1Rwp3yjVUf3bAWhwLjG9rKmUlYmI7VjPuNLqtO9t0Eo-bAM8mE0LdYieFVRVKA4KYox/pub?gid=828477804&single=true&output=csv"; // published CSV of the "Balance Snapshot" tab (feeds the balance gauge)
+const NEEDS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQfHbKTRIbnDPqch2FCNGXKjbmXG8ReltAk5-KahXqQ6MgHY-yscQ9-IJ7TEbSTreAffgx8FL2LchoQ/pub?gid=1892373341&single=true&output=csv";
+const RESULTS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQfHbKTRIbnDPqch2FCNGXKjbmXG8ReltAk5-KahXqQ6MgHY-yscQ9-IJ7TEbSTreAffgx8FL2LchoQ/pub?gid=769314143&single=true&output=csv";
+const LEDGER_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQfHbKTRIbnDPqch2FCNGXKjbmXG8ReltAk5-KahXqQ6MgHY-yscQ9-IJ7TEbSTreAffgx8FL2LchoQ/pub?gid=500042350&single=true&output=csv"; // published CSV of the "Balance Snapshot" tab (feeds the balance gauge)
 
 // Where "Give" buttons send people — the ONE shared SVdP giving option on the
 // parish site. There is no way to earmark a gift to a specific family: all
