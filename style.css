@@ -184,6 +184,7 @@ body {
 }
 .page-index .drive-eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; color: var(--rust); margin-bottom: 8px; }
 .page-index .drive-title { font-family: 'Fraunces', serif; font-weight: 700; font-size: 26px; color: var(--ink); margin: 0; }
+.page-index .drive-sub { font-size: 14px; line-height: 1.5; color: var(--inktext); margin: 10px 0 0; }
 
 .page-index .table-card {
   background: var(--paper);
