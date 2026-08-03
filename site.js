@@ -35,6 +35,13 @@ function currentMonthKey() {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
 }
+// "2026-08-02" -> "August"
+function formatMonthName(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr + 'T00:00:00');
+  if (isNaN(d)) return '';
+  return d.toLocaleString('en-US', { month: 'long' });
+}
 function effectiveFundRaised() {
   return FUND_RAISED_MONTH === currentMonthKey() ? FUND_RAISED : 0;
 }

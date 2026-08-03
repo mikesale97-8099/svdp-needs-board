@@ -145,11 +145,11 @@ body {
   font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase;
   letter-spacing: 0.2em; color: var(--rust); margin-bottom: 8px;
 }
-.page-board .fund-amounts { font-family: 'Fraunces', serif; font-weight: 700; font-size: 28px; color: var(--ink); margin-bottom: 4px; }
-.page-board .fund-amounts span { color: var(--sage); }
-.page-board .fund-sub { font-size: 13px; color: var(--inktext); margin-bottom: 14px; }
-.page-board .fund-track { width: 100%; height: 12px; background: var(--paperline); border-radius: 6px; overflow: hidden; margin-bottom: 18px; }
-.page-board .fund-fill { height: 100%; background: var(--sage); transition: width 0.4s ease; }
+.page-board .snapshot-sentence {
+  font-size: 16px; line-height: 1.6; color: var(--ink);
+  margin: 0 0 18px; font-family: 'Source Serif 4', serif;
+}
+.page-board .snapshot-sentence strong { font-family: 'Fraunces', serif; color: var(--rust); }
 .page-board .fund-give-btn {
   display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 14px;
   background: var(--blue); color: var(--paper); padding: 11px 26px; text-decoration: none; border-radius: 2px;
@@ -301,10 +301,11 @@ body {
   font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase;
   letter-spacing: 0.2em; color: var(--rust); margin-bottom: 6px;
 }
-.page-index .fund-amounts { font-family: 'Fraunces', serif; font-weight: 700; font-size: 22px; color: var(--ink); margin-bottom: 10px; }
-.page-index .fund-amounts span { color: var(--sage); }
-.page-index .fund-track { width: 100%; height: 10px; background: var(--paperline); border-radius: 5px; overflow: hidden; }
-.page-index .fund-fill { height: 100%; background: var(--sage); }
+.page-index .snapshot-sentence {
+  font-size: 13px; line-height: 1.6; color: var(--ink);
+  margin: 0; font-family: 'Source Serif 4', serif;
+}
+.page-index .snapshot-sentence strong { font-family: 'Fraunces', serif; color: var(--rust); }
 .page-index .card-wrap { position: relative; width: 240px; }
 .page-index .card {
   position: relative; min-height: 170px; padding: 22px 18px 18px;

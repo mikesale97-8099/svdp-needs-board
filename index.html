@@ -24,12 +24,11 @@
       <div class="section-label">Needs Bulletin Board</div>
       <div class="dual-cards">
         <div class="fund-card">
-          <div class="fund-label">This Month's Neighbor Fund</div>
-          <div class="fund-amounts"><span id="fund-raised">$0</span> of <span id="fund-goal">$0</span> raised</div>
-          <div class="fund-track"><div class="fund-fill" id="fund-fill" style="width:0%"></div></div>
+          <div class="fund-label">This Month, At a Glance</div>
+          <p class="snapshot-sentence" id="snapshot-sentence"></p>
         </div>
         <div class="balance-card">
-          <div class="fund-label">SVdP Balance</div>
+          <div class="fund-label">Funds &minus; Needs</div>
           <div class="gauge-wrap" id="gauge-wrap"></div>
           <div class="gauge-amount" id="gauge-amount">$0</div>
           <div class="gauge-status" id="gauge-status"></div>
@@ -107,13 +106,6 @@
   const ROTATIONS = [-2, 1.5, -1];
 
   function renderPreview(allNeeds) {
-    const goal = fundGoal(allNeeds);
-    const raised = effectiveFundRaised();
-    const pct = goal ? Math.min(100, Math.round((raised / goal) * 100)) : 0;
-    document.getElementById('fund-raised').textContent = `$${raised.toLocaleString()}`;
-    document.getElementById('fund-goal').textContent = `$${goal.toLocaleString()}`;
-    document.getElementById('fund-fill').style.width = pct + '%';
-
     const visible = visibleNeeds(allNeeds);
     const statusRank = { open: 0, "partially covered": 1, covered: 2 };
     const sorted = [...visible].sort((a, b) =>
@@ -180,6 +172,7 @@
   }
 
   function renderBalance(snapshotRows) {
+    const snap = latestSnapshot(snapshotRows);
     const balance = currentBalance(snapshotRows);
     const status = gaugeStatus(balance);
     document.getElementById('gauge-wrap').innerHTML = gaugeSVG(balance, 180);
@@ -187,6 +180,18 @@
     const statusEl = document.getElementById('gauge-status');
     statusEl.textContent = status.label;
     statusEl.style.color = status.color;
+
+    const sentenceEl = document.getElementById('snapshot-sentence');
+    if (sentenceEl) {
+      if (snap) {
+        const month = formatMonthName(snap.snapshot_date) || 'this month';
+        const funds = toNumber(snap.funds_budgeted);
+        const needs = toNumber(snap.outstanding_needs);
+        sentenceEl.innerHTML = `In <strong>${month}</strong>, SVdP has <strong>$${funds.toLocaleString()}</strong> in available funds and <strong>$${needs.toLocaleString()}</strong> in outstanding needs.`;
+      } else {
+        sentenceEl.textContent = '';
+      }
+    }
   }
 
   async function init() {
