@@ -105,11 +105,7 @@
 
   function renderPreview(allNeeds) {
     const visible = visibleNeeds(allNeeds);
-    const statusRank = { open: 0, "partially covered": 1, covered: 2 };
-    const sorted = [...visible].sort((a, b) =>
-      (statusRank[(a.status || 'open').toLowerCase()] ?? 0) -
-      (statusRank[(b.status || 'open').toLowerCase()] ?? 0)
-    );
+    const sorted = sortForBoard(visible);
 
     const el = document.getElementById('preview-board');
     el.innerHTML = '';
