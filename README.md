@@ -90,3 +90,31 @@ const FUND_RAISED_MONTH = "2026-07";
 Paste your two published CSV URLs between the quotes. Also paste in your parish giving site's SVdP donation link as `DONATE_URL`. Update `FUND_RAISED` and `FUND_RAISED_MONTH` by hand each month as you check the parish giving system. Save and re-upload `site.js` to GitHub — no need to touch `index.html` or `board.html`.
 
 If a URL is left blank or the fetch fails for any reason, the page quietly falls back to the built-in sample data, so it never shows a broken page.
+
+## SVdP Balance Gauge
+
+Separate from the "known need" thermometer, both pages now show a **balance gauge** next to it — a semicircle dial showing this month's budgeted funds minus known outstanding needs.
+
+This is deliberately **not** a transactional ledger — the conference's detailed money-tracking lives elsewhere with whoever minds the funds. It reads from the workbook's **Balance Snapshot** tab: a simple, hand-entered row every week or so with four plain numbers (no formulas):
+
+```
+snapshot_date | funds_budgeted | outstanding_needs | assistance_provided_this_month
+```
+
+The gauge always reads the **last row** — `funds_budgeted − outstanding_needs` — as the current balance. `assistance_provided_this_month` displays as a small stat next to the gauge on `board.html` (not the compact preview on `index.html`, to keep that one tight).
+
+Publish that tab as CSV the same way as the others, then paste its URL into `site.js`:
+
+```js
+const LEDGER_CSV_URL = "";
+```
+
+The needle's red/yellow/green zones are controlled by three constants right above the gauge code in `site.js`:
+
+```js
+const GAUGE_LOW = 500;        // below this: needs replenishing
+const GAUGE_HEALTHY = 1500;   // above this: healthy reserve
+const GAUGE_SCALE_MAX = 4000; // top of the visual scale — balances above this peg the needle at max
+```
+
+These are starting guesses, not derived from anything — adjust them once the conference has a feel for what a healthy month-to-month margin actually looks like. The current sample snapshot data lands at $1,095 (Watch closely / yellow zone), comfortably inside the $4,000 scale.

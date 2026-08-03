@@ -122,11 +122,25 @@ body {
   max-width: 420px;
   margin: 0 auto;
 }
+.page-board .dual-cards {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; margin-bottom: 40px;
+}
 .page-board .fund-card {
-  max-width: 520px; margin: 0 auto 40px; text-align: center;
+  flex: 1 1 400px; max-width: 440px; text-align: center;
   padding: 28px 28px 24px; background: var(--paper);
   box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+  margin-bottom: 0;
 }
+.page-board .balance-card {
+  flex: 1 1 320px; max-width: 360px; text-align: center;
+  padding: 28px 28px 20px; background: var(--paper);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+  display: flex; flex-direction: column; align-items: center;
+}
+.page-board .gauge-wrap { margin-bottom: 6px; }
+.page-board .gauge-amount { font-family: 'Fraunces', serif; font-weight: 700; font-size: 26px; color: var(--ink); }
+.page-board .gauge-status { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; }
+.page-board .gauge-assist { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--inktext); opacity: 0.75; margin-bottom: 4px; }
 .page-board .fund-label {
   font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase;
   letter-spacing: 0.2em; color: var(--rust); margin-bottom: 8px;
@@ -203,6 +217,7 @@ body {
   letter-spacing: 0.06em; color: var(--ink); font-weight: 700;
 }
 .page-index tr.total-row td { font-weight: 700; color: var(--ink); border-top: 2px solid var(--ink); border-bottom: none; }
+.page-index td.ytd-col { font-weight: 700; color: var(--ink); background: rgba(37,64,142,0.06); }
 
 .page-index .sisters { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; }
 .page-index .sister-card {
@@ -264,11 +279,24 @@ body {
   max-width: 480px;
   margin: 0 auto;
 }
+.page-index .dual-cards {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; margin-bottom: 28px;
+}
 .page-index .fund-card {
-  max-width: 420px; margin: 0 auto 28px; text-align: center;
+  flex: 1 1 300px; max-width: 320px; text-align: center;
   padding: 20px 24px 18px; background: var(--paper);
   box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  margin-bottom: 0;
 }
+.page-index .balance-card {
+  flex: 1 1 240px; max-width: 260px; text-align: center;
+  padding: 18px 20px 16px; background: var(--paper);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  display: flex; flex-direction: column; align-items: center;
+}
+.page-index .gauge-wrap { margin-bottom: 4px; }
+.page-index .gauge-amount { font-family: 'Fraunces', serif; font-weight: 700; font-size: 20px; color: var(--ink); }
+.page-index .gauge-status { font-family: 'IBM Plex Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
 .page-index .fund-label {
   font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase;
   letter-spacing: 0.2em; color: var(--rust); margin-bottom: 6px;

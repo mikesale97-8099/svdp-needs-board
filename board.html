@@ -20,13 +20,24 @@
       </div>
     </div>
 
-    <div class="fund-card">
-      <div class="fund-label">This Month's Neighbor Fund</div>
-      <div class="fund-amounts"><span id="fund-raised">$0</span> of <span id="fund-goal">$0</span> raised</div>
-      <div class="fund-sub" id="fund-sub"></div>
-      <div class="fund-track"><div class="fund-fill" id="fund-fill" style="width:0%"></div></div>
-      <a href="#" class="fund-give-btn" id="fund-give-btn" target="_blank" rel="noopener">Give to SVdP &rarr;</a>
-      <p class="fund-note">Gifts go into one shared SVdP fund on the parish giving site — there's no way to earmark a gift to a single family. The fund covers needs like the ones below, and Vincentians update status here by hand as gifts come in, so it may lag a few days behind your giving.</p>
+    <div class="dual-cards">
+      <div class="fund-card">
+        <div class="fund-label">This Month's Neighbor Fund</div>
+        <div class="fund-amounts"><span id="fund-raised">$0</span> of <span id="fund-goal">$0</span> raised</div>
+        <div class="fund-sub" id="fund-sub"></div>
+        <div class="fund-track"><div class="fund-fill" id="fund-fill" style="width:0%"></div></div>
+        <a href="#" class="fund-give-btn" id="fund-give-btn" target="_blank" rel="noopener">Give to SVdP &rarr;</a>
+        <p class="fund-note">Gifts go into one shared SVdP fund on the parish giving site — there's no way to earmark a gift to a single family. The fund covers needs like the ones below, and Vincentians update status here by hand as gifts come in, so it may lag a few days behind your giving.</p>
+      </div>
+
+      <div class="balance-card">
+        <div class="fund-label">SVdP Balance</div>
+        <div class="gauge-wrap" id="gauge-wrap"></div>
+        <div class="gauge-amount" id="gauge-amount">$0</div>
+        <div class="gauge-status" id="gauge-status"></div>
+        <div class="gauge-assist" id="gauge-assist"></div>
+        <p class="fund-note">This month's budgeted funds minus known outstanding needs — a periodic snapshot, not a live running total. Detailed money-tracking lives with our treasurer; this is just the headline number.</p>
+      </div>
     </div>
 
     <div class="section-label">Needs Bulletin Board</div>
@@ -184,11 +195,30 @@
     else { btn.removeAttribute('target'); btn.href = '#'; btn.onclick = (e) => e.preventDefault(); }
   }
 
+  function renderBalance(snapshotRows) {
+    const balance = currentBalance(snapshotRows);
+    const status = gaugeStatus(balance);
+    document.getElementById('gauge-wrap').innerHTML = gaugeSVG(balance, 200);
+    document.getElementById('gauge-amount').textContent = `$${balance.toLocaleString()}`;
+    const statusEl = document.getElementById('gauge-status');
+    statusEl.textContent = status.label;
+    statusEl.style.color = status.color;
+
+    const snap = latestSnapshot(snapshotRows);
+    const assistEl = document.getElementById('gauge-assist');
+    if (assistEl) {
+      assistEl.textContent = snap
+        ? `$${toNumber(snap.assistance_provided_this_month).toLocaleString()} in assistance provided this month`
+        : '';
+    }
+  }
+
   async function init() {
     NEEDS = await loadNeeds();
     renderFilters();
     renderBoard();
     renderFund();
+    renderBalance(await loadBalanceSnapshots());
   }
   init();
 </script>

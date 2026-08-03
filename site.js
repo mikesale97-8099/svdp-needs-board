@@ -6,6 +6,7 @@
 // ============================================================
 const NEEDS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTLCe9tt9PADbPtBSjNblVbCTdoa37wI6T0MGHVb8mBQkSu91kYBBZR4hI8dGBJ75-Pb4WE4CzhL-oE/pub?gid=1084595956&single=true&output=csv";
 const RESULTS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTLCe9tt9PADbPtBSjNblVbCTdoa37wI6T0MGHVb8mBQkSu91kYBBZR4hI8dGBJ75-Pb4WE4CzhL-oE/pub?gid=557003829&single=true&output=csv";
+const LEDGER_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSOs8ZXpsfAJ1Rwp3yjVUf3bAWhwLjG9rKmUlYmI7VjPuNLqtO9t0Eo-bAM8mE0LdYieFVRVKA4KYox/pub?gid=828477804&single=true&output=csv"; // published CSV of the "Balance Snapshot" tab (feeds the balance gauge)
 
 // Where "Give" buttons send people — the ONE shared SVdP giving option on the
 // parish site. There is no way to earmark a gift to a specific family: all
@@ -94,8 +95,9 @@ const SAMPLE_NEEDS = [
 // The Results tab is already fully formula-driven from the Needs tab inside
 // the workbook itself — the site just displays whatever it publishes.
 const SAMPLE_RESULTS = [
-  { month: "July 2026", home_visits: "4", people_helped: "13", furniture_requests: "1", rent_utility_requests: "3", financial_assistance: "300" },
-  { month: "August 2026", home_visits: "1", people_helped: "4", furniture_requests: "1", rent_utility_requests: "0", financial_assistance: "0" },
+  { month: "June 2026", home_visits: "10", people_helped: "32", furniture_requests: "3", rent_utility_requests: "7", financial_assistance: "1590" },
+  { month: "July 2026", home_visits: "10", people_helped: "33", furniture_requests: "3", rent_utility_requests: "8", financial_assistance: "395" },
+  { month: "August 2026", home_visits: "8", people_helped: "26", furniture_requests: "2", rent_utility_requests: "6", financial_assistance: "0" },
 ];
 
 function parseCSV(text) {
@@ -208,6 +210,86 @@ function expandVisitsToNeeds(visits) {
 async function loadNeeds() {
   const visits = await loadVisits();
   return expandVisitsToNeeds(visits);
+}
+
+// ------------------------------------------------------------
+// Balance Snapshot / balance gauge — a simple hand-reported snapshot
+// (not a transactional ledger; detailed money-tracking lives elsewhere
+// with whoever minds the funds). Separate from the "known need"
+// thermometer above.
+// ------------------------------------------------------------
+const SAMPLE_BALANCE_SNAPSHOTS = [
+  { snapshot_date: "2026-07-05", funds_budgeted: "1700", outstanding_needs: "900", assistance_provided_this_month: "250" },
+  { snapshot_date: "2026-07-12", funds_budgeted: "1700", outstanding_needs: "605", assistance_provided_this_month: "395" },
+  { snapshot_date: "2026-07-19", funds_budgeted: "1650", outstanding_needs: "420", assistance_provided_this_month: "395" },
+  { snapshot_date: "2026-07-26", funds_budgeted: "1700", outstanding_needs: "185", assistance_provided_this_month: "395" },
+  { snapshot_date: "2026-08-02", funds_budgeted: "1700", outstanding_needs: "605", assistance_provided_this_month: "0" },
+];
+
+async function loadBalanceSnapshots() { return loadCSV(LEDGER_CSV_URL, SAMPLE_BALANCE_SNAPSHOTS); }
+
+// Uses the LAST row (most recent snapshot). Balance shown on the gauge is
+// funds budgeted this month minus known outstanding needs — how much room
+// is left, not a running bank-style total.
+function latestSnapshot(rows) {
+  return rows.length ? rows[rows.length - 1] : null;
+}
+function currentBalance(rows) {
+  const snap = latestSnapshot(rows);
+  if (!snap) return 0;
+  return toNumber(snap.funds_budgeted) - toNumber(snap.outstanding_needs);
+}
+
+// Tune these as the conference gets a feel for what's actually "healthy" —
+// these are starting guesses, not tied to any formula.
+const GAUGE_LOW = 500;       // below this: needs replenishing
+const GAUGE_HEALTHY = 1500;  // above this: healthy reserve
+const GAUGE_SCALE_MAX = 4000; // top of the visual scale; balances above this peg the needle at max
+
+function gaugeStatus(balance) {
+  if (balance < GAUGE_LOW) return { label: "Needs replenishing", color: "#A8492E" };
+  if (balance < GAUGE_HEALTHY) return { label: "Watch closely", color: "#C9A24B" };
+  return { label: "Healthy reserve", color: "#7C8B6F" };
+}
+
+function polarToCartesian(cx, cy, r, angleDeg) {
+  const rad = (angleDeg * Math.PI) / 180;
+  return { x: cx + r * Math.cos(rad), y: cy - r * Math.sin(rad) };
+}
+function describeArc(cx, cy, r, startDeg, endDeg) {
+  const start = polarToCartesian(cx, cy, r, startDeg);
+  const end = polarToCartesian(cx, cy, r, endDeg);
+  const largeArc = Math.abs(startDeg - endDeg) > 180 ? 1 : 0;
+  const sweep = startDeg > endDeg ? 1 : 0;
+  return `M ${start.x} ${start.y} A ${r} ${r} 0 ${largeArc} ${sweep} ${end.x} ${end.y}`;
+}
+
+// Renders a semicircle gauge as an SVG string. angle 180deg = left (value 0),
+// 0deg = right (value GAUGE_SCALE_MAX), sweeping up through 90deg (top).
+function gaugeSVG(balance, size) {
+  size = size || 220;
+  const cx = size / 2, cy = size * 0.6, r = size * 0.41;
+  const lowFrac = GAUGE_LOW / GAUGE_SCALE_MAX;
+  const healthyFrac = GAUGE_HEALTHY / GAUGE_SCALE_MAX;
+  const valueFrac = Math.max(0, Math.min(1, balance / GAUGE_SCALE_MAX));
+  const angle = (f) => 180 - f * 180;
+
+  const redArc = describeArc(cx, cy, r, angle(0), angle(lowFrac));
+  const yellowArc = describeArc(cx, cy, r, angle(lowFrac), angle(healthyFrac));
+  const greenArc = describeArc(cx, cy, r, angle(healthyFrac), angle(1));
+  const needleAngle = angle(valueFrac);
+  const needleTip = polarToCartesian(cx, cy, r * 0.78, needleAngle);
+  const strokeW = size * 0.073;
+
+  return `
+    <svg width="${size}" height="${size * 0.62}" viewBox="0 0 ${size} ${size * 0.62}">
+      <path d="${redArc}" fill="none" stroke="#A8492E" stroke-width="${strokeW}" stroke-linecap="round"/>
+      <path d="${yellowArc}" fill="none" stroke="#C9A24B" stroke-width="${strokeW}" stroke-linecap="round"/>
+      <path d="${greenArc}" fill="none" stroke="#7C8B6F" stroke-width="${strokeW}" stroke-linecap="round"/>
+      <line x1="${cx}" y1="${cy}" x2="${needleTip.x}" y2="${needleTip.y}" stroke="#2B3A42" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="${cx}" cy="${cy}" r="${size * 0.032}" fill="#2B3A42"/>
+    </svg>
+  `;
 }
 
 // Applies the monthly rollover rule: a Covered need from a PRIOR month drops

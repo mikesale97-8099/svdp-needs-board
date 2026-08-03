@@ -22,10 +22,18 @@
     <!-- ===== Needs Bulletin Board (preview) ===== -->
     <div class="section">
       <div class="section-label">Needs Bulletin Board</div>
-      <div class="fund-card">
-        <div class="fund-label">This Month's Neighbor Fund</div>
-        <div class="fund-amounts"><span id="fund-raised">$0</span> of <span id="fund-goal">$0</span> raised</div>
-        <div class="fund-track"><div class="fund-fill" id="fund-fill" style="width:0%"></div></div>
+      <div class="dual-cards">
+        <div class="fund-card">
+          <div class="fund-label">This Month's Neighbor Fund</div>
+          <div class="fund-amounts"><span id="fund-raised">$0</span> of <span id="fund-goal">$0</span> raised</div>
+          <div class="fund-track"><div class="fund-fill" id="fund-fill" style="width:0%"></div></div>
+        </div>
+        <div class="balance-card">
+          <div class="fund-label">SVdP Balance</div>
+          <div class="gauge-wrap" id="gauge-wrap"></div>
+          <div class="gauge-amount" id="gauge-amount">$0</div>
+          <div class="gauge-status" id="gauge-status"></div>
+        </div>
       </div>
       <div class="preview-board" id="preview-board"></div>
       <div class="board-cta"><a href="board.html">View the full board &rarr;</a></div>
@@ -46,13 +54,7 @@
       <div class="section-label">Home Visit Results</div>
       <div class="table-card">
         <table>
-          <thead>
-            <tr>
-              <th>Month</th><th>Home Visits</th><th>People Helped</th>
-              <th>Furniture / Home Requests</th><th>Rent / Utility Requests</th>
-              <th>Financial Assistance</th>
-            </tr>
-          </thead>
+          <thead id="results-head"></thead>
           <tbody id="results-body"></tbody>
         </table>
       </div>
@@ -145,43 +147,52 @@
   }
 
   function renderResults(rows) {
+    const head = document.getElementById('results-head');
     const body = document.getElementById('results-body');
+    head.innerHTML = '';
     body.innerHTML = '';
-    let totals = { home_visits: 0, people_helped: 0, furniture_requests: 0, rent_utility_requests: 0, financial_assistance: 0 };
-    rows.forEach(r => {
+
+    // Assumes the sheet lists months chronologically ascending (June, July,
+    // August, ...) — reverse so the table reads most-recent-first.
+    const months = [...rows].reverse();
+
+    const METRICS = [
+      { key: 'home_visits', label: 'Home Visits' },
+      { key: 'people_helped', label: 'People Helped' },
+      { key: 'furniture_requests', label: 'Furniture / Home Requests' },
+      { key: 'rent_utility_requests', label: 'Rent / Utility Requests' },
+      { key: 'financial_assistance', label: 'Financial Assistance', money: true },
+    ];
+
+    const headRow = document.createElement('tr');
+    headRow.innerHTML = `<th>Metric</th><th>YTD</th>` + months.map(m => `<th>${m.month || ''}</th>`).join('');
+    head.appendChild(headRow);
+
+    METRICS.forEach(metric => {
+      const values = months.map(m => toNumber(m[metric.key]));
+      const ytd = values.reduce((sum, v) => sum + v, 0);
+      const fmt = (n) => metric.money ? `$${n.toLocaleString()}` : n.toLocaleString();
       const tr = document.createElement('tr');
-      const fa = toNumber(r.financial_assistance);
-      tr.innerHTML = `
-        <td>${r.month || ''}</td>
-        <td>${r.home_visits || ''}</td>
-        <td>${r.people_helped || ''}</td>
-        <td>${r.furniture_requests || ''}</td>
-        <td>${r.rent_utility_requests || ''}</td>
-        <td>$${fa.toLocaleString()}</td>
-      `;
+      tr.innerHTML = `<td>${metric.label}</td><td class="ytd-col">${fmt(ytd)}</td>` +
+        values.map(v => `<td>${fmt(v)}</td>`).join('');
       body.appendChild(tr);
-      totals.home_visits += toNumber(r.home_visits);
-      totals.people_helped += toNumber(r.people_helped);
-      totals.furniture_requests += toNumber(r.furniture_requests);
-      totals.rent_utility_requests += toNumber(r.rent_utility_requests);
-      totals.financial_assistance += fa;
     });
-    const totalRow = document.createElement('tr');
-    totalRow.className = 'total-row';
-    totalRow.innerHTML = `
-      <td>Total</td>
-      <td>${totals.home_visits}</td>
-      <td>${totals.people_helped}</td>
-      <td>${totals.furniture_requests}</td>
-      <td>${totals.rent_utility_requests}</td>
-      <td>$${totals.financial_assistance.toLocaleString()}</td>
-    `;
-    body.appendChild(totalRow);
+  }
+
+  function renderBalance(snapshotRows) {
+    const balance = currentBalance(snapshotRows);
+    const status = gaugeStatus(balance);
+    document.getElementById('gauge-wrap').innerHTML = gaugeSVG(balance, 180);
+    document.getElementById('gauge-amount').textContent = `$${balance.toLocaleString()}`;
+    const statusEl = document.getElementById('gauge-status');
+    statusEl.textContent = status.label;
+    statusEl.style.color = status.color;
   }
 
   async function init() {
     renderPreview(await loadNeeds());
     renderResults(await loadResults());
+    renderBalance(await loadBalanceSnapshots());
   }
   init();
 </script>
