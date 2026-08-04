@@ -346,6 +346,14 @@ function visibleNeeds(needs) {
   });
 }
 
+// The archive counterpart to visibleNeeds() — every need ever marked
+// Covered, regardless of when. This is what powers the "Families We've
+// Served" section: a running record of lives touched, using the same
+// no-names Summary text already shown for open needs.
+function servedNeeds(needs) {
+  return needs.filter(n => (n.status || '').toLowerCase() === 'covered');
+}
+
 // The shared fund goal is the sum of "amount" across visible Rent/Utility
 // needs that aren't Covered yet — i.e. the known gap still open right now.
 function fundGoal(needs) {
