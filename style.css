@@ -166,12 +166,17 @@ body {
   max-width: 900px; margin: 12px auto 40px; text-align: center;
 }
 .page-board .served-archive summary {
-  font-family: 'IBM Plex Mono', monospace; font-size: 12px; text-transform: uppercase;
-  letter-spacing: 0.08em; color: var(--paperline); cursor: pointer; list-style: none;
+  font-family: 'Source Serif 4', serif; font-size: 14px; font-style: italic;
+  color: var(--paperline); cursor: pointer; list-style: none;
   padding: 14px 0; border-top: 1px dashed rgba(231,221,196,0.4);
-  max-width: 560px; margin: 0 auto; line-height: 1.6;
+  max-width: 520px; margin: 0 auto; line-height: 1.6;
 }
 .page-board .served-archive summary::-webkit-details-marker { display: none; }
+.page-board .served-archive summary::after {
+  content: '\25B8'; display: inline-block; margin-left: 8px;
+  font-style: normal; transition: transform 0.2s ease;
+}
+.page-board .served-archive[open] summary::after { transform: rotate(90deg); }
 .page-board .served-archive summary:hover { color: var(--paper); }
 .page-board .served-archive[open] summary { color: var(--paper); margin-bottom: 4px; }
 .page-board .served-note {
