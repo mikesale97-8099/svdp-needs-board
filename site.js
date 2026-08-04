@@ -239,6 +239,7 @@ function expandVisitsToNeeds(visits) {
         amount: '',
         month_posted: monthPosted,
         date_posted: datePosted,
+        date_covered: '', // no Date Covered column exists yet for Special Need — falls back to month_posted in visibleNeeds()
       });
     } else if (hasWarehouse) {
       needs.push({
@@ -251,6 +252,7 @@ function expandVisitsToNeeds(visits) {
         amount: '',
         month_posted: monthPosted,
         date_posted: datePosted,
+        date_covered: v.distribution_center_request_date || '', // closest proxy — it's what actually drives Warehouse Status to "Covered"
       });
     }
 
@@ -264,6 +266,7 @@ function expandVisitsToNeeds(visits) {
         amount: v.rent_amount_needed ? String(toNumber(v.rent_amount_needed)) : '',
         month_posted: monthPosted,
         date_posted: datePosted,
+        date_covered: v.rent_date_covered || '',
       });
     }
     if ((v['utility_assistance_needed?'] || '').toLowerCase() === 'yes') {
@@ -276,6 +279,7 @@ function expandVisitsToNeeds(visits) {
         amount: v.utility_need_amount ? String(toNumber(v.utility_need_amount)) : '',
         month_posted: monthPosted,
         date_posted: datePosted,
+        date_covered: v.utility_date_covered || '',
       });
     }
   });
@@ -314,16 +318,31 @@ function latestSnapshot(rows) {
   return rows.length ? rows[rows.length - 1] : null;
 }
 
-// Applies the monthly rollover rule: a Covered need from a PRIOR month drops
-// off automatically; Open/Partially Covered needs keep showing regardless of
-// age; needs posted in the current month show regardless of status.
+// "2026-08-01" or "2026-08" -> "2026-08". Handles both a full date and an
+// already-YYYY-MM string, since month_posted is the latter and date_covered
+// is the former.
+function toMonthKey(dateOrMonthStr) {
+  if (!dateOrMonthStr) return '';
+  const s = String(dateOrMonthStr).trim();
+  if (/^\d{4}-\d{2}$/.test(s)) return s;
+  const iso = parseDateSortable(s);
+  return /^\d{4}-\d{2}-\d{2}$/.test(iso) ? iso.slice(0, 7) : '';
+}
+
+// Applies the monthly rollover rule: a Covered need drops off once the
+// month it was ACTUALLY covered in has passed — not the month the need was
+// originally posted. A need requested in July but covered in August stays
+// visible through August, then rolls off in September. Open/Partially
+// Covered needs keep showing regardless of age, and needs with no
+// date_covered yet (e.g. Special Need items, which don't have that column)
+// fall back to their posted month, same as before.
 function visibleNeeds(needs) {
   const thisMonth = currentMonthKey();
   return needs.filter(n => {
     const status = (n.status || 'open').toLowerCase();
-    const postedThisMonth = (n.month_posted || thisMonth) === thisMonth;
     if (status !== 'covered') return true;
-    return postedThisMonth;
+    const coveredMonth = toMonthKey(n.date_covered) || toMonthKey(n.month_posted) || thisMonth;
+    return coveredMonth === thisMonth;
   });
 }
 
