@@ -4,9 +4,9 @@
 // Leave as "" to use the sample data below instead.
 // Both index.html and board.html read from this one file.
 // ============================================================
-const NEEDS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTDMXdM3W2GaX0PHTRyjk6GcUKXSBOyWJ0wE3i9XGo6rapbM0Q4rBA4SstV5kALSdZhvHkw5sDlp7yl/pub?gid=2128174808&single=true&output=csv";
-const RESULTS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTDMXdM3W2GaX0PHTRyjk6GcUKXSBOyWJ0wE3i9XGo6rapbM0Q4rBA4SstV5kALSdZhvHkw5sDlp7yl/pub?gid=92684007&single=true&output=csv";
-const LEDGER_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTDMXdM3W2GaX0PHTRyjk6GcUKXSBOyWJ0wE3i9XGo6rapbM0Q4rBA4SstV5kALSdZhvHkw5sDlp7yl/pub?gid=1331525201&single=true&output=csv"; // published CSV of the "Balance Snapshot" tab (feeds the balance gauge)
+const NEEDS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR82kApT_TZfIHVvO3yeyIR6BZQm4kd2DfTfImZuxuyrZ9HHCdyowBtx0OtIgR8OSFBmdgJbf7OHYSJ/pub?gid=248271228&single=true&output=csv";
+const RESULTS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR82kApT_TZfIHVvO3yeyIR6BZQm4kd2DfTfImZuxuyrZ9HHCdyowBtx0OtIgR8OSFBmdgJbf7OHYSJ/pub?gid=14387743&single=true&output=csv";
+const LEDGER_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR82kApT_TZfIHVvO3yeyIR6BZQm4kd2DfTfImZuxuyrZ9HHCdyowBtx0OtIgR8OSFBmdgJbf7OHYSJ/pub?gid=1768793824&single=true&output=csv"; // published CSV of the "Balance Snapshot" tab (feeds the balance gauge)
 
 // Where "Give" buttons send people — the ONE shared SVdP giving option on the
 // parish site. There is no way to earmark a gift to a specific family: all
@@ -36,14 +36,14 @@ function currentMonthKey() {
 // "2026-08-02" -> "August"
 function formatMonthName(dateStr) {
   if (!dateStr) return '';
-  const d = new Date(dateStr + 'T00:00:00');
+  const d = new Date(parseDateSortable(dateStr) + 'T00:00:00');
   if (isNaN(d)) return '';
   return d.toLocaleString('en-US', { month: 'long' });
 }
 // "2026-08-02" -> "August 2026" (matches the Results tab's "month" column)
 function formatMonthYear(dateStr) {
   if (!dateStr) return '';
-  const d = new Date(dateStr + 'T00:00:00');
+  const d = new Date(parseDateSortable(dateStr) + 'T00:00:00');
   if (isNaN(d)) return '';
   return d.toLocaleString('en-US', { month: 'long', year: 'numeric' });
 }
@@ -397,6 +397,23 @@ function buildSnapshotSentence(needs, resultsRows, snap) {
   return `<p>${activity}</p><p>${s}</p>`;
 }
 
+// Parses a date string into a sortable "YYYY-MM-DD" form regardless of the
+// display format Google exported it in — a sheet's date column might show
+// as "6/3/26", "6/3/2026", or "2026-06-03" depending on cell formatting,
+// and none of that should have to matter for sorting to work correctly.
+function parseDateSortable(str) {
+  if (!str) return '';
+  str = String(str).trim();
+  if (/^\d{4}-\d{2}-\d{2}/.test(str)) return str.slice(0, 10); // already ISO-ish
+  const m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2}|\d{4})$/); // M/D/YY or M/D/YYYY
+  if (m) {
+    let [, mo, da, yr] = m;
+    if (yr.length === 2) yr = (Number(yr) < 50 ? '20' : '19') + yr;
+    return `${yr}-${mo.padStart(2, '0')}-${da.padStart(2, '0')}`;
+  }
+  return str; // unrecognized format — falls back to plain text comparison
+}
+
 // Board ordering: actionable cards first (Special Need claim cards, since
 // they need a specific person to step up), then Rent/Utility (actionable
 // via the general Give button), then Warehouse info-only cards last (no
@@ -411,7 +428,7 @@ function sortForBoard(needs) {
   return [...needs].sort((a, b) => {
     const pa = boardPriority(a), pb = boardPriority(b);
     if (pa !== pb) return pa - pb;
-    return (b.date_posted || '').localeCompare(a.date_posted || '');
+    return parseDateSortable(b.date_posted).localeCompare(parseDateSortable(a.date_posted));
   });
 }
 
