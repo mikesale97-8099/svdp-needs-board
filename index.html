@@ -11,13 +11,35 @@
 <body class="page-index">
   <div class="container">
     <div class="header">
-      <div class="header-card">
-        <img src="https://www.stluke.org/images/template/logo-header.svg" alt="St. Luke Catholic Church" class="site-logo" />
-        <div class="header-eyebrow">Society of St. Vincent de Paul &middot; St. Luke Conference</div>
-        <h1 class="header-title">Love thy Neighbor</h1>
-        <p class="header-sub">St. Luke's Vincentians visit families privately in their homes, listening to their struggles and offering humble advice and assistance within our means. We also lead several annual parish SVdP drives and support our sister conferences.</p>
-      </div>
+      <details class="mission-details" id="mission-details">
+        <summary class="mission-summary">St. Luke SVdP &middot; Love thy Neighbor</summary>
+        <div class="header-card">
+          <img src="https://www.stluke.org/images/template/logo-header.svg" alt="St. Luke Catholic Church" class="site-logo" />
+          <div class="header-eyebrow">Society of St. Vincent de Paul &middot; St. Luke Conference</div>
+          <h1 class="header-title">Love thy Neighbor</h1>
+          <p class="header-sub">St. Luke's Vincentians visit families in their homes, listening to their struggles and offering humble advice and assistance within our means. We also lead several annual parish SVdP drives and support our sister conferences.</p>
+        </div>
+      </details>
     </div>
+    <script>
+      // Full mission shows automatically on someone's very first visit; every
+      // visit after that it starts collapsed into the one-line summary above,
+      // still one tap away. Wrapped in try/catch since some private-browsing
+      // modes block localStorage entirely — falls back to "always expanded"
+      // if so, which is a safe default either way.
+      (function () {
+        var el = document.getElementById('mission-details');
+        if (!el) return;
+        try {
+          if (!localStorage.getItem('svdp_visited')) {
+            el.setAttribute('open', '');
+            localStorage.setItem('svdp_visited', '1');
+          }
+        } catch (e) {
+          el.setAttribute('open', '');
+        }
+      })();
+    </script>
 
     <!-- ===== Needs Bulletin Board (preview) ===== -->
     <div class="section">
@@ -99,11 +121,105 @@
     <div class="footer-note">St. Luke Catholic Church &middot; St. Vincent de Paul Society &middot; Updated after every home visit</div>
   </div>
 
+  <div class="toast" id="toast">Thank you. Someone from SVdP will reach out with next steps.</div>
+
 <script src="site.js"></script>
 <script>
   const ROTATIONS = [-2, 1.5, -1];
+  let claimed = new Set();
+
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  function claimNeed(need) {
+    claimed.add(need.id);
+    renderPreview(NEEDS_CACHE);
+    toast("Opening an email to notify SVdP — please hit send to complete your claim.");
+
+    const subject = `SVdP Needs Board: I can help with "${need.title}"`;
+    const body =
+`Hi,
+
+I'd like to help with this need from the St. Luke SVdP Needs Board:
+
+Item: ${need.title}
+Details: ${need.detail || ''}
+
+My name:
+Best way to reach me:
+
+Thank you!`;
+    const mailto = `mailto:${CLAIM_NOTIFY_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailto;
+  }
+
+  function renderStatusCard(need) {
+    const status = (need.status || 'Open');
+    const color = statusColor(status);
+    const isCovered = status.toLowerCase() === 'covered';
+    const card = document.createElement('div');
+    card.className = 'card' + (isCovered ? ' covered' : '');
+    card.innerHTML = `
+      <div class="stamp" style="color:${color};border-color:${color};">${status.toUpperCase()}</div>
+      <div>
+        <div class="status-badge" style="background:${color};">${status}</div>
+        <h3 class="card-title">${need.title || ''}</h3>
+        <p class="card-detail">${need.detail || ''}</p>
+        ${need.amount ? `<p class="amount-note">Approx. $${need.amount} — from the shared SVdP fund</p>` : ''}
+      </div>
+    `;
+    return card;
+  }
+
+  function renderClaimCard(need) {
+    const sheetCovered = (need.status || '').toLowerCase() === 'covered';
+    const isClaimed = claimed.has(need.id) || sheetCovered;
+    const color = statusColor(need.status);
+    const card = document.createElement('div');
+    card.className = 'card' + (isClaimed ? ' claimed' : '');
+    card.innerHTML = `
+      <div class="stamp" style="color:${sheetCovered ? color : 'var(--sage)'};border-color:${sheetCovered ? color : 'var(--sage)'};${isClaimed ? '' : 'display:none;'}">${sheetCovered ? 'COVERED' : 'CLAIMED'}</div>
+      <div>
+        <div class="status-badge" style="background:${color};">${need.status || 'Open'}</div>
+        <h3 class="card-title">${need.title || ''}</h3>
+        <p class="card-detail">${need.detail || ''}</p>
+      </div>
+      ${sheetCovered ? '' : `
+        <button class="card-btn ${isClaimed ? 'claimed-btn' : ''}" ${isClaimed ? 'disabled' : ''}>
+          ${isClaimed ? "Thank you — we'll follow up" : "I can help with this →"}
+        </button>
+      `}
+    `;
+    if (!isClaimed) card.querySelector('button').onclick = () => claimNeed(need);
+    return card;
+  }
+
+  function renderWarehouseCard(need) {
+    const status = (need.status || 'Open');
+    const color = statusColor(status);
+    const isCovered = status.toLowerCase() === 'covered';
+    const card = document.createElement('div');
+    card.className = 'card' + (isCovered ? ' covered' : '');
+    card.innerHTML = `
+      <div>
+        <div class="status-badge" style="background:${color};">${status}</div>
+        <h3 class="card-title">${need.title || ''}</h3>
+        <p class="card-detail">${need.detail || ''}</p>
+      </div>
+      <div class="warehouse-tag">SVdP Warehouse</div>
+    `;
+    return card;
+  }
+
+  let NEEDS_CACHE = [];
 
   function renderPreview(allNeeds) {
+    NEEDS_CACHE = allNeeds;
     const visible = visibleNeeds(allNeeds);
     const sorted = sortForBoard(visible);
 
@@ -119,15 +235,13 @@
       pin.className = 'card-pin';
       pin.style.background = `radial-gradient(circle at 35% 30%, #fff8 0%, ${pinColor} 40%, ${pinColor} 100%)`;
 
-      const isWarehouse = need.category === 'Furnishings' && need.subtype === 'warehouse';
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.innerHTML = `
-        <div class="card-urgency" style="color:${pinColor}">${need.status || 'Open'}</div>
-        <h3 class="card-title">${need.title || ''}</h3>
-        <p class="card-detail">${need.detail || ''}</p>
-        ${isWarehouse ? '<div class="warehouse-tag">SVdP Warehouse</div>' : ''}
-      `;
+      let card;
+      if (need.category === 'Furnishings') {
+        card = need.subtype === 'special' ? renderClaimCard(need) : renderWarehouseCard(need);
+      } else {
+        card = renderStatusCard(need);
+      }
+
       wrap.appendChild(pin);
       wrap.appendChild(card);
       el.appendChild(wrap);
