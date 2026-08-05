@@ -11,19 +11,19 @@
 <body class="page-index">
   <div class="container">
     <div class="header">
-      <details class="mission-details" id="mission-details">
-        <summary class="mission-summary">Society of St. Vincent de Paul &mdash; St. Luke</summary>
-        <div class="header-card">
-          <img src="https://www.stluke.org/images/template/logo-header.svg" alt="St. Luke Catholic Church" class="site-logo" />
-          <div class="header-eyebrow">Society of St. Vincent de Paul &middot; St. Luke Conference</div>
-          <h1 class="header-title">Love thy Neighbor</h1>
+      <div class="header-card">
+        <img src="https://www.stluke.org/images/template/logo-header.svg" alt="St. Luke Catholic Church" class="site-logo" />
+        <div class="header-eyebrow">Society of St. Vincent de Paul &middot; St. Luke Conference</div>
+        <h1 class="header-title">Love thy Neighbor</h1>
+        <details class="mission-details" id="mission-details">
+          <summary class="mission-summary">Our Mission</summary>
           <p class="header-sub">St. Luke's Vincentians visit families in their homes, listening to their struggles and offering humble advice and assistance within our means. We also lead several annual parish SVdP drives and support our sister conferences.</p>
-        </div>
-      </details>
+        </details>
+      </div>
     </div>
     <script>
       // Full mission shows automatically on someone's very first visit; every
-      // visit after that it starts collapsed into the one-line summary above,
+      // visit after that it starts collapsed into "Our Mission ▸" above,
       // still one tap away. Wrapped in try/catch since some private-browsing
       // modes block localStorage entirely — falls back to "always expanded"
       // if so, which is a safe default either way.

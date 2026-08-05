@@ -275,19 +275,17 @@ body {
 
 /* ---- index.html versions of shared-name components (sized smaller) ---- */
 .page-index .header { text-align: center; margin-bottom: 36px; }
-.page-index .mission-details { display: inline-block; }
+.page-index .mission-details { margin-top: 12px; }
 .page-index .mission-summary {
   display: inline-block; cursor: pointer; list-style: none;
-  font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 700; letter-spacing: 0.05em;
-  color: var(--ink); background: var(--paper);
-  padding: 10px 22px; border-radius: 20px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--rust);
 }
 .page-index .mission-summary::-webkit-details-marker { display: none; }
-.page-index .mission-summary::after { content: ' \25B8'; display: inline-block; margin-left: 8px; color: var(--rust); font-weight: 700; transition: transform 0.2s ease; }
+.page-index .mission-summary::after { content: ' \25B8'; display: inline-block; margin-left: 6px; transition: transform 0.2s ease; }
 .page-index .mission-details[open] .mission-summary::after { transform: rotate(90deg); }
-.page-index .mission-details[open] .mission-summary { margin-bottom: 16px; }
-.page-index .mission-details .header-card { margin-top: 16px; }
+.page-index .mission-summary:hover { color: var(--ink); }
+.page-index .mission-details[open] .mission-summary { color: var(--ink); margin-bottom: 10px; }
 .page-index .header-card {
   display: inline-block;
   padding: 22px 32px;
